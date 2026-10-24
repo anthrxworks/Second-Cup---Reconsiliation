@@ -3,198 +3,277 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1a1a1a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Daily Report">
+<link rel="apple-touch-icon" href="logo.png">
 <title>Second Cup · Daily Report</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Archivo+Narrow:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* =========================================================
-   CONFIG LIVES IN THE <script> BELOW (search for CONFIG)
+   BRAND THEME — swap these values for the official Second Cup
+   brand guide (colours + fonts) and everything follows.
    ========================================================= */
 :root{
-  --paper:#f6f1e7; --card:#fffdf8; --ink:#2b1d14; --ink-2:#6b5848; --line:#e4d9c6;
-  --crema:#c8742f; --crema-soft:#f3e2cf; --ok:#3f7d4e; --ok-soft:#e1efe3;
-  --bad:#b5412b; --bad-soft:#f6e0da; --warn:#a8790f; --warn-soft:#f5ecd2;
-  --radius:14px; --shadow:0 1px 0 rgba(43,29,20,.04),0 6px 20px -12px rgba(43,29,20,.25);
-  --mono:'IBM Plex Mono',ui-monospace,monospace; --sans:'IBM Plex Sans',system-ui,sans-serif; --serif:'Fraunces',Georgia,serif;
+  --brand-ink:#1a1a1a;        /* primary – black wordmark */
+  --brand-accent:#c8102e;     /* accent – red */
+  --brand-accent-soft:#fbe3e1;
+  --bg:#f2efe9;               /* warm neutral */
+  --card:#ffffff;
+  --line:#e2ddd3;
+  --ink-2:#6e6a64;
+  --ok:#2e7d43; --ok-soft:#e3f1e6;
+  --bad:#c8102e; --bad-soft:#fbe3e1;
+  --warn:#9a6b00; --warn-soft:#f7edd2;
+  --font-head:'Archivo Narrow','Archivo',system-ui,sans-serif;
+  --font-body:'Archivo',system-ui,sans-serif;
+  --font-num:'IBM Plex Mono',ui-monospace,monospace;
+  --radius:12px; --shadow:0 1px 0 rgba(0,0,0,.03),0 8px 24px -16px rgba(0,0,0,.35);
 }
 *{box-sizing:border-box}
 html,body{margin:0}
-body{background:var(--paper);color:var(--ink);font:15px/1.45 var(--sans);-webkit-font-smoothing:antialiased;padding-bottom:84px}
+body{background:var(--bg);color:var(--brand-ink);font:15px/1.45 var(--font-body);-webkit-font-smoothing:antialiased;padding-bottom:84px}
 button,input,select,textarea{font:inherit;color:inherit}
-.wrap{max-width:980px;margin:0 auto;padding:0 16px}
+.wrap{max-width:1000px;margin:0 auto;padding:0 16px}
+[hidden]{display:none!important}
 
-/* Header */
-header.top{position:sticky;top:0;z-index:20;background:rgba(246,241,231,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-header.top .wrap{display:flex;align-items:center;gap:12px;height:60px}
-.brand{font-family:var(--serif);font-weight:700;font-size:21px;letter-spacing:-.01em;display:flex;align-items:center;gap:9px}
-.brand .cup{width:26px;height:26px;border-radius:50%;background:var(--ink);display:grid;place-items:center}
-.brand .cup:after{content:"";width:12px;height:12px;border-radius:50%;background:var(--crema)}
-.brand small{font-family:var(--sans);font-weight:500;font-size:12px;color:var(--ink-2);letter-spacing:.06em;text-transform:uppercase;margin-left:2px}
+/* role visibility */
+body:not(.r-supervisor):not(.r-manager) .sup{display:none!important}
+body:not(.r-manager) .mgr{display:none!important}
+body.r-manager .not-mgr{display:none!important}
+
+/* ---------- logo / wordmark ---------- */
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit}
+.logo img{height:34px;width:auto;display:block}
+.wordmark{font-family:var(--font-head);font-weight:700;font-size:20px;letter-spacing:.14em;text-transform:uppercase;line-height:1;white-space:nowrap}
+@media(max-width:520px){header.top .wordmark{font-size:16px;letter-spacing:.1em}header.top .wordmark small{display:none}.chip{padding:4px}.hbtn{padding:6px 10px}}
+.wordmark small{display:block;font-size:9px;letter-spacing:.32em;color:var(--ink-2);margin-top:3px;font-weight:600}
+
+/* ---------- header ---------- */
+header.top{position:sticky;top:0;z-index:20;background:var(--brand-ink);color:#fff}
+header.top .wrap{display:flex;align-items:center;gap:12px;height:62px}
+header.top .wordmark small{color:#a9a49c}
+header.top .logo img{filter:none}
 .spacer{flex:1}
-.pill{font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
-.pill:before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
-.pill.demo{background:var(--warn-soft);color:var(--warn)}
-.pill.live{background:var(--ok-soft);color:var(--ok)}
-.iconbtn{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--card);display:grid;place-items:center;cursor:pointer}
-.iconbtn:hover{border-color:var(--ink-2)}
+.chip{display:flex;align-items:center;gap:8px;font-size:13px;background:#2b2b2b;border-radius:999px;padding:5px 6px 5px 12px}
+.chip b{font-weight:600}
+.chip .role{white-space:nowrap;font-size:10px;text-transform:uppercase;letter-spacing:.1em;background:var(--brand-accent);color:#fff;border-radius:999px;padding:3px 8px;font-weight:700}
+.chip .role.demo{background:#555}
+.hbtn{white-space:nowrap;border:1px solid #3a3a3a;background:none;color:#fff;border-radius:999px;padding:7px 12px;font-size:13px;font-weight:600;cursor:pointer}
+.hbtn:hover{border-color:#fff}
+@media(max-width:520px){.chip b{display:none}}
 
-/* Tabs: bottom on mobile, top on desktop */
-nav.tabs{position:fixed;bottom:0;left:0;right:0;z-index:30;background:var(--ink);display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
-nav.tabs button{flex:1;background:none;border:0;color:#cdbfae;padding:8px 4px;border-radius:10px;font-size:12px;font-weight:500;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+/* ---------- nav ---------- */
+nav.tabs{position:fixed;bottom:0;left:0;right:0;z-index:30;background:#fff;border-top:1px solid var(--line);display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+nav.tabs button{flex:1;background:none;border:0;color:var(--ink-2);padding:8px 4px;border-radius:10px;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
 nav.tabs button svg{width:20px;height:20px}
-nav.tabs button.on{background:#3d2b1f;color:#fff}
+nav.tabs button.on{color:var(--brand-accent)}
 @media(min-width:820px){
   body{padding-bottom:40px}
-  nav.tabs{position:static;background:none;padding:0;gap:4px;justify-content:flex-start;margin:18px 0 6px}
-  nav.tabs button{flex:0 0 auto;flex-direction:row;color:var(--ink-2);font-size:14px;padding:9px 14px;gap:8px}
-  nav.tabs button svg{width:17px;height:17px}
-  nav.tabs button.on{background:var(--ink);color:#fff}
+  nav.tabs{position:static;background:none;border:0;padding:0;gap:2px;justify-content:flex-start;margin:20px 0 4px;border-bottom:1px solid var(--line)}
+  nav.tabs button{flex:0 0 auto;flex-direction:row;font-size:13px;padding:12px 14px;gap:8px;border-radius:0;border-bottom:3px solid transparent;margin-bottom:-1px}
+  nav.tabs button svg{width:16px;height:16px}
+  nav.tabs button.on{color:var(--brand-ink);border-bottom-color:var(--brand-accent)}
 }
 
-/* Layout */
-.view{display:none;padding-top:18px}
+/* ---------- layout ---------- */
+.view{display:none;padding-top:20px}
 .view.on{display:block}
-h1.title{font-family:var(--serif);font-weight:700;font-size:28px;letter-spacing:-.02em;margin:0 0 2px}
+h1.title{font-family:var(--font-head);font-weight:700;font-size:30px;letter-spacing:.02em;text-transform:uppercase;margin:0 0 2px}
 .sub{color:var(--ink-2);margin:0 0 18px}
 .grid{display:grid;gap:14px}
-@media(min-width:820px){.report-grid{grid-template-columns:1fr 330px;align-items:start}}
+@media(min-width:820px){.report-grid{grid-template-columns:1fr 320px;align-items:start}}
+.sections{counter-reset:sec}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
-.card h2{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-2);font-weight:600;margin:0 0 12px;display:flex;align-items:center;gap:8px}
-.card h2 .n{font-family:var(--mono);background:var(--crema-soft);color:var(--crema);border-radius:6px;padding:1px 6px;font-size:11px}
+.card h2{font-family:var(--font-head);font-size:14px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;margin:0 0 12px;display:flex;align-items:center;gap:10px}
+.sections>.card>h2:before{counter-increment:sec;content:counter(sec,decimal-leading-zero);font-family:var(--font-num);font-size:11px;background:var(--brand-ink);color:#fff;border-radius:5px;padding:2px 6px;letter-spacing:0}
+.card h2 .lock{margin-left:auto;font-family:var(--font-body);font-size:10px;letter-spacing:.08em;color:var(--brand-accent);background:var(--brand-accent-soft);border-radius:99px;padding:3px 8px}
 .row{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
-label.f{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:500;color:var(--ink-2)}
-input[type=text],input[type=number],input[type=date],input[type=time],input[type=password],input[type=url],select,textarea{
-  width:100%;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 11px;color:var(--ink);outline:none;min-height:44px}
-input:focus,select:focus,textarea:focus{border-color:var(--crema);box-shadow:0 0 0 3px var(--crema-soft)}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:600;color:var(--ink-2)}
+label.f em{font-style:normal;font-weight:400;font-size:12px}
+input[type=text],input[type=number],input[type=date],input[type=time],input[type=password],input[type=url],input[type=tel],select,textarea{
+  width:100%;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:10px 11px;color:var(--brand-ink);outline:none;min-height:46px}
+input:focus,select:focus,textarea:focus{border-color:var(--brand-ink)}
+input[readonly]{background:var(--bg);font-weight:600}
 textarea{min-height:80px;resize:vertical}
 .money{position:relative}
-.money input{padding-left:26px;font-family:var(--mono);text-align:right}
-.money:before{content:"€";position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--ink-2);font-family:var(--mono);font-size:14px}
+.money input{padding-left:28px;font-family:var(--font-num);text-align:right;font-size:16px}
+.money:before{content:"€";position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink-2);font-family:var(--font-num)}
 
-/* receipt-style lines */
-.lines{border-top:1px dashed var(--line);margin-top:12px;padding-top:10px}
-.line{display:flex;justify-content:space-between;align-items:baseline;padding:4px 0;font-size:14px}
-.line span:last-child{font-family:var(--mono);font-weight:500}
-.line.total{font-weight:600;font-size:16px;border-top:1px solid var(--ink);margin-top:6px;padding-top:8px}
-.line.total span:last-child{font-weight:600}
+.lines{border-top:1px dashed var(--line);margin-top:12px;padding-top:8px}
+.line{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:4px 0;font-size:14px}
+.line span:last-child{font-family:var(--font-num);font-weight:500;white-space:nowrap}
+.line.total{font-weight:700;font-size:16px;border-top:1.5px solid var(--brand-ink);margin-top:6px;padding-top:8px}
+.hero{display:flex;justify-content:space-between;align-items:center;background:var(--brand-ink);color:#fff;border-radius:10px;padding:14px 16px;margin-top:10px}
+.hero .k{font-family:var(--font-head);text-transform:uppercase;letter-spacing:.14em;font-weight:700;font-size:14px}
+.hero .k small{display:block;font-family:var(--font-body);text-transform:none;letter-spacing:0;font-weight:400;color:#bdb8b0;font-size:12px;margin-top:2px}
+.hero .v{font-family:var(--font-num);font-size:26px;font-weight:600}
 .pos{color:var(--ok)} .neg{color:var(--bad)}
-.tag{font-size:11px;font-weight:600;border-radius:6px;padding:2px 7px}
+.tag{font-size:11px;font-weight:700;border-radius:6px;padding:2px 7px;font-family:var(--font-body);letter-spacing:.02em}
 .tag.ok{background:var(--ok-soft);color:var(--ok)} .tag.bad{background:var(--bad-soft);color:var(--bad)} .tag.warn{background:var(--warn-soft);color:var(--warn)}
 
-/* buttons */
-.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 14px;font-weight:600;cursor:pointer;min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
-.btn:hover{border-color:var(--ink-2)}
-.btn.primary{background:var(--ink);border-color:var(--ink);color:#fff}
-.btn.primary:hover{background:#3d2b1f}
-.btn.accent{background:var(--crema);border-color:var(--crema);color:#fff}
+.btn{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:10px 18px;font-weight:700;cursor:pointer;min-height:46px;display:inline-flex;align-items:center;justify-content:center;gap:8px;letter-spacing:.02em}
+.btn:hover{border-color:var(--brand-ink)}
+.btn.primary{background:var(--brand-ink);border-color:var(--brand-ink);color:#fff}
+.btn.primary:hover{background:#333}
+.btn.accent{background:var(--brand-accent);border-color:var(--brand-accent);color:#fff}
 .btn.ghost{background:none;border-color:transparent;color:var(--ink-2)}
-.btn.sm{min-height:34px;padding:6px 10px;font-size:13px}
+.btn.sm{min-height:36px;padding:6px 13px;font-size:13px}
 .btn:disabled{opacity:.5;cursor:not-allowed}
-.btnrow{display:flex;gap:8px;flex-wrap:wrap}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 
-/* denominations */
-details.denoms{margin-top:10px;border:1px dashed var(--line);border-radius:10px;padding:8px 12px}
-details.denoms summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--crema)}
-.denom-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-top:10px}
-.denom{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:13px}
-.denom b{min-width:44px;text-align:right;font-weight:500}
-.denom input{min-height:36px;padding:6px 8px;text-align:center}
+/* ---------- keypad calculator ---------- */
+.kcalc{max-width:340px;background:var(--brand-ink);border-radius:16px;padding:12px;margin-top:12px}
+.kcalc .disp{background:#2b2b2b;border-radius:10px;padding:8px 12px;text-align:right;margin-bottom:10px;min-height:68px;display:flex;flex-direction:column;justify-content:flex-end}
+.kcalc .expr{color:#a9a49c;font-family:var(--font-num);font-size:13px;min-height:18px;word-break:break-all}
+.kcalc .res{color:#fff;font-family:var(--font-num);font-size:28px;font-weight:600;word-break:break-all}
+.kcalc .keys{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.kcalc .keys button{height:52px;border:0;border-radius:12px;background:#3a3a3a;color:#fff;font-size:20px;font-family:var(--font-num);cursor:pointer;touch-action:manipulation}
+.kcalc .keys button:active{transform:scale(.96);filter:brightness(1.25)}
+.kcalc .keys .op{background:#555}
+.kcalc .keys .fn{background:#8a8580;color:#1a1a1a;font-weight:600}
+.kcalc .keys .eq{background:var(--brand-accent)}
+.kcalc .use{width:100%;margin-top:10px;height:46px;border:0;border-radius:12px;background:#fff;color:var(--brand-ink);font-weight:700;cursor:pointer;font-size:14px}
+details.more{margin-top:10px}
+details.more summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--brand-accent);list-style:none;padding:6px 0}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary:before{content:"＋ "} details.more[open] summary:before{content:"－ "}
 
-/* dynamic rows */
-.drow{display:grid;grid-template-columns:1fr 120px 38px;gap:8px;margin-bottom:8px}
-.srow{display:grid;grid-template-columns:1.4fr 1fr 1fr 80px 38px;gap:8px;margin-bottom:8px;align-items:center}
-.srow .meta{grid-column:1/-1;font-size:12px;color:var(--ink-2);font-family:var(--mono);margin-top:-4px;display:flex;justify-content:space-between}
-.x{width:38px;height:44px;border:1px solid var(--line);background:#fff;border-radius:10px;cursor:pointer;color:var(--ink-2)}
+/* ---------- dynamic rows ---------- */
+.drow{display:grid;grid-template-columns:1fr 120px 40px;gap:8px;margin-bottom:8px}
+.srow{display:grid;grid-template-columns:1.4fr 1fr 1fr 80px 40px;gap:8px;margin-bottom:8px;align-items:center}
+.srow .meta{grid-column:1/-1;font-size:12px;color:var(--ink-2);font-family:var(--font-num);margin-top:-4px;display:flex;justify-content:space-between}
+.x{width:40px;height:46px;border:1.5px solid var(--line);background:#fff;border-radius:10px;cursor:pointer;color:var(--ink-2)}
 .x:hover{color:var(--bad);border-color:var(--bad)}
-@media(max-width:560px){
-  .srow{grid-template-columns:1fr 1fr 70px 38px}
-  .srow select{grid-column:1/-1}
-}
-.head-cols{display:grid;grid-template-columns:1.4fr 1fr 1fr 80px 38px;gap:8px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2);margin-bottom:6px}
-@media(max-width:560px){.head-cols{display:none}}
+.head-cols{display:grid;grid-template-columns:1.4fr 1fr 1fr 80px 40px;gap:8px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2);margin-bottom:6px;font-weight:600}
+@media(max-width:560px){.srow{grid-template-columns:1fr 1fr 70px 40px}.srow select{grid-column:1/-1}.head-cols{display:none}}
 
-/* summary sticky */
-.summary{position:sticky;top:76px}
-.kpi{display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-bottom:1px dashed var(--line)}
-.kpi:last-of-type{border-bottom:0}
+/* ---------- summary ---------- */
+.summary{position:sticky;top:78px}
+.kpi{display:flex;justify-content:space-between;align-items:baseline;padding:9px 0;border-bottom:1px dashed var(--line)}
+.kpi:last-child{border-bottom:0}
 .kpi .k{font-size:13px;color:var(--ink-2)}
-.kpi .v{font-family:var(--mono);font-size:20px;font-weight:600}
-.meter{height:10px;background:var(--crema-soft);border-radius:99px;overflow:hidden;position:relative;margin:6px 0 4px}
+.kpi .v{font-family:var(--font-num);font-size:19px;font-weight:600}
+.kpi.big .v{font-size:24px}
+.meter{height:8px;background:var(--bg);border-radius:99px;overflow:hidden;position:relative;margin:6px 0 4px}
 .meter i{position:absolute;inset:0 auto 0 0;background:var(--ok);border-radius:99px;transition:width .3s}
-.meter b{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink)}
-.meter-legend{display:flex;justify-content:space-between;font-size:11px;color:var(--ink-2);font-family:var(--mono)}
+.meter b{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--brand-ink)}
 
-/* signature */
+/* ---------- signature ---------- */
 .sig-wrap{border:1.5px dashed var(--ink-2);border-radius:10px;background:#fff;position:relative;height:150px;touch-action:none}
 .sig-wrap canvas{width:100%;height:100%;display:block;border-radius:10px;cursor:crosshair}
 .sig-wrap .hint{position:absolute;left:14px;bottom:10px;font-size:12px;color:var(--ink-2);pointer-events:none}
 .sig-wrap .base{position:absolute;left:14px;right:14px;bottom:30px;border-bottom:1px solid var(--line);pointer-events:none}
+.signer{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:14px}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--brand-ink);color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px}
 
-/* schedule grid */
+/* ---------- schedule ---------- */
 .weekbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-.weekbar .label{font-family:var(--serif);font-size:19px;font-weight:500;min-width:200px;text-align:center}
-.sched-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--radius);border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow)}
-table.sched{border-collapse:separate;border-spacing:0;width:100%;min-width:820px}
+.weekbar .label{font-family:var(--font-head);font-size:18px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;min-width:210px;text-align:center}
+.sched-scroll{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow)}
+table.sched{border-collapse:separate;border-spacing:0;width:100%;min-width:840px}
 table.sched th,table.sched td{border-bottom:1px solid var(--line);padding:8px;text-align:center;font-size:13px}
-table.sched th{background:#fbf6ec;font-weight:600;color:var(--ink-2);font-size:12px;text-transform:uppercase;letter-spacing:.05em}
-table.sched th.today{color:var(--crema)}
-table.sched td.name,table.sched th.name{text-align:left;position:sticky;left:0;background:var(--card);z-index:2;min-width:140px;border-right:1px solid var(--line)}
-table.sched th.name{background:#fbf6ec}
-table.sched td.name b{display:block;font-weight:600}
-table.sched td.name small{color:var(--ink-2);font-family:var(--mono);font-size:11px}
-.cell{width:100%;min-height:48px;border:1px dashed var(--line);border-radius:9px;background:none;cursor:pointer;font-family:var(--mono);font-size:12px;color:var(--ink-2);padding:4px}
-.cell:hover{border-color:var(--crema);color:var(--crema)}
-.cell.has{border-style:solid;border-color:transparent;background:var(--crema-soft);color:var(--ink)}
+table.sched th{background:var(--brand-ink);color:#fff;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+table.sched th.today{background:var(--brand-accent)}
+table.sched td.name,table.sched th.name{text-align:left;position:sticky;left:0;z-index:2;min-width:140px;border-right:1px solid var(--line)}
+table.sched td.name{background:var(--card)}
+table.sched td.name b{display:block;font-weight:700}
+table.sched td.name small{color:var(--ink-2);font-family:var(--font-num);font-size:11px}
+.cell{width:100%;min-height:48px;border:1.5px dashed var(--line);border-radius:9px;background:none;cursor:pointer;font-family:var(--font-num);font-size:12px;color:var(--ink-2);padding:4px}
+.cell:hover{border-color:var(--brand-ink);color:var(--brand-ink)}
+.cell.has{border-style:solid;border-color:transparent;background:var(--bg);color:var(--brand-ink)}
 .cell.has small{display:block;color:var(--ink-2);font-size:10px}
-table.sched tfoot td{font-family:var(--mono);font-size:12px;background:#fbf6ec;font-weight:500}
-table.sched td.tot{font-family:var(--mono);font-size:12px;white-space:nowrap}
+table.sched tfoot td{font-family:var(--font-num);font-size:12px;background:var(--bg);font-weight:600}
+table.sched td.tot{font-family:var(--font-num);font-size:12px;white-space:nowrap}
 
-/* labor */
+.daycards{display:grid;gap:12px;grid-template-columns:1fr}
+@media(min-width:700px){.daycards{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1000px){.daycards{grid-template-columns:repeat(3,1fr)}}
+.daycard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.daycard.today{border-color:var(--brand-accent);box-shadow:0 0 0 2px var(--brand-accent-soft)}
+.daycard header{display:flex;justify-content:space-between;align-items:baseline;padding:10px 14px;background:var(--brand-ink);color:#fff}
+.daycard.today header{background:var(--brand-accent)}
+.daycard header b{font-family:var(--font-head);font-size:16px;letter-spacing:.08em;text-transform:uppercase}
+.daycard header span{font-size:12px;opacity:.8}
+.who{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:9px 14px;border-bottom:1px dashed var(--line)}
+.who:last-child{border-bottom:0}
+.who b{font-weight:700}
+.who .t{font-family:var(--font-num);font-size:13px;text-align:right}
+.who small{color:var(--ink-2);font-size:12px}
+.who small.r{text-align:right;font-family:var(--font-num)}
+.who.me{background:var(--brand-accent-soft)}
+.who.me b:after{content:" · you";color:var(--brand-accent);font-weight:600;font-size:12px}
+.daycard .empty{padding:12px 14px;color:var(--ink-2);font-size:13px}
+.me-sum{font-family:var(--font-num);font-size:13px;background:var(--card);border:1px solid var(--line);padding:8px 12px;border-radius:999px;display:inline-block;margin-bottom:14px}
+
+/* ---------- labor ---------- */
 .tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:14px}
 @media(min-width:820px){.tiles{grid-template-columns:repeat(4,1fr)}}
 .tile{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow)}
-.tile .k{font-size:12px;color:var(--ink-2);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
-.tile .v{font-family:var(--mono);font-size:24px;font-weight:600;margin-top:4px}
+.tile .k{font-size:11px;color:var(--ink-2);text-transform:uppercase;letter-spacing:.1em;font-weight:700}
+.tile .v{font-family:var(--font-num);font-size:23px;font-weight:600;margin-top:4px}
 .tile .d{font-size:12px;color:var(--ink-2);margin-top:2px}
 .bars{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;align-items:end;height:180px;padding:10px 4px 0;position:relative}
 .bar{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:5px}
-.bar .col{width:70%;max-width:46px;border-radius:7px 7px 3px 3px;background:var(--ok);min-height:3px;transition:height .3s}
-.bar .col.over{background:var(--bad)}
-.bar .col.none{background:var(--line)}
-.bar .pct{font-family:var(--mono);font-size:11px;font-weight:600}
-.bar .day{font-size:11px;color:var(--ink-2);text-transform:uppercase}
-.target-line{position:absolute;left:0;right:0;border-top:2px dashed var(--ink);pointer-events:none}
-.target-line span{position:absolute;right:0;top:-18px;font-size:11px;font-family:var(--mono);background:var(--card);padding:0 4px}
+.bar .col{width:70%;max-width:44px;border-radius:6px 6px 2px 2px;background:var(--brand-ink);min-height:3px;transition:height .3s}
+.bar .col.over{background:var(--brand-accent)} .bar .col.none{background:var(--line)}
+.bar .pct{font-family:var(--font-num);font-size:11px;font-weight:600}
+.bar .day{font-size:11px;color:var(--ink-2);text-transform:uppercase;font-weight:600}
+.target-line{position:absolute;left:0;right:0;border-top:2px dashed var(--brand-accent);pointer-events:none}
+.target-line span{position:absolute;right:0;top:-18px;font-size:11px;font-family:var(--font-num);background:var(--card);padding:0 4px;color:var(--brand-accent)}
 table.data{width:100%;border-collapse:collapse;font-size:13px}
-table.data th,table.data td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:right}
-table.data th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-2);font-weight:600}
+table.data th,table.data td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+table.data th{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-2);font-weight:700}
 table.data th:first-child,table.data td:first-child{text-align:left}
-table.data td{font-family:var(--mono)}
-table.data tfoot td{font-weight:600;border-top:1.5px solid var(--ink);border-bottom:0}
+table.data td{font-family:var(--font-num)}
+table.data tfoot td{font-weight:700;border-top:1.5px solid var(--brand-ink);border-bottom:0}
 .tablewrap{overflow-x:auto}
+a.pdf{font-family:var(--font-body);font-size:11px;font-weight:700;color:var(--brand-accent);text-decoration:none;border:1.5px solid var(--brand-accent-soft);border-radius:6px;padding:2px 7px}
 
-/* staff list */
-.staff-row{display:grid;grid-template-columns:1.3fr 1fr 110px 90px 38px;gap:8px;align-items:center;margin-bottom:8px}
-@media(max-width:560px){.staff-row{grid-template-columns:1fr 1fr;}.staff-row .x{justify-self:end}}
+/* ---------- team ---------- */
+.acct{display:grid;grid-template-columns:1.3fr 1fr 130px 40px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line)}
+.acct:last-child{border-bottom:0}
+.acct .nm b{display:block} .acct .nm small{color:var(--ink-2);font-size:12px}
+.pend{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px;border-radius:10px;background:var(--warn-soft);margin-bottom:8px}
+.pend b{flex:1;min-width:120px}
+.staff-row{display:grid;grid-template-columns:1.3fr 1fr 110px 90px 40px;gap:8px;align-items:center;margin-bottom:8px}
+@media(max-width:560px){.staff-row,.acct{grid-template-columns:1fr 1fr}.staff-row .x,.acct .x{justify-self:end}}
 .switch{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-2)}
 
-/* modal */
-.scrim{position:fixed;inset:0;background:rgba(43,29,20,.45);z-index:50;display:none;align-items:flex-end;justify-content:center}
+/* ---------- auth ---------- */
+#auth{min-height:100vh;display:grid;place-items:center;padding:24px 16px;background:var(--brand-ink)}
+.auth-card{background:#fff;border-radius:18px;width:100%;max-width:400px;padding:28px 24px;box-shadow:0 30px 60px -30px rgba(0,0,0,.6)}
+.auth-card .logo{justify-content:center;margin-bottom:6px}
+.auth-card .logo img{height:56px}
+.auth-card .wordmark{font-size:26px;text-align:center}
+.auth-card h3{font-family:var(--font-head);text-transform:uppercase;letter-spacing:.1em;font-size:15px;text-align:center;margin:18px 0 16px;color:var(--ink-2)}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--bg);border-radius:999px;padding:4px;margin:18px 0}
+.seg button{border:0;background:none;padding:9px;border-radius:999px;font-weight:700;cursor:pointer;color:var(--ink-2)}
+.seg button.on{background:var(--brand-ink);color:#fff}
+.pin{letter-spacing:.5em;font-family:var(--font-num);font-size:20px!important;text-align:center}
+.auth-msg{font-size:13px;border-radius:10px;padding:10px 12px;margin-top:12px}
+.auth-msg.err{background:var(--bad-soft);color:var(--bad)} .auth-msg.ok{background:var(--ok-soft);color:var(--ok)}
+.demo-pick{margin-top:16px;padding-top:14px;border-top:1px dashed var(--line)}
+
+/* ---------- modal / toast ---------- */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;display:none;align-items:flex-end;justify-content:center}
 .scrim.on{display:flex}
 .modal{background:var(--card);width:100%;max-width:440px;border-radius:18px 18px 0 0;padding:20px;max-height:90vh;overflow:auto}
 @media(min-width:600px){.scrim{align-items:center}.modal{border-radius:18px}}
-.modal h3{font-family:var(--serif);font-size:22px;margin:0 0 4px}
-.modal .sub{margin-bottom:14px}
+.modal h3{font-family:var(--font-head);text-transform:uppercase;letter-spacing:.06em;font-size:22px;margin:0 0 4px}
 .presets{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 4px}
-.presets button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:6px 11px;font-size:12px;font-family:var(--mono);cursor:pointer}
-.presets button:hover{border-color:var(--crema);color:var(--crema)}
-
-/* toast */
-.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:11px 16px;border-radius:12px;font-weight:500;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:60;max-width:90vw}
+.presets button{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:6px 11px;font-size:12px;font-family:var(--font-num);cursor:pointer}
+.presets button:hover{border-color:var(--brand-ink)}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);background:var(--brand-ink);color:#fff;padding:11px 16px;border-radius:12px;font-weight:600;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:60;max-width:90vw}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 .toast.err{background:var(--bad)}
 @media(min-width:820px){.toast{bottom:28px}}
+.saved-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--ok-soft);border:1px solid #c3e0ca;color:var(--ok);border-radius:var(--radius);padding:12px 14px;margin-bottom:14px;font-weight:600}
+.saved-banner a{color:var(--ok);font-weight:700}
 .muted{color:var(--ink-2);font-size:13px}
 .hr{height:1px;background:var(--line);margin:14px 0}
 .loading{opacity:.55;pointer-events:none}
@@ -202,193 +281,231 @@ table.data tfoot td{font-weight:600;border-top:1.5px solid var(--ink);border-bot
 </head>
 <body>
 
+<!-- ================= SIGN IN / SIGN UP ================= -->
+<section id="auth">
+  <div class="auth-card">
+    <div class="logo" id="authLogo"></div>
+    <div class="seg"><button id="segIn" class="on">Sign in</button><button id="segUp">Sign up</button></div>
+
+    <form id="formIn" autocomplete="off">
+      <div class="grid">
+        <label class="f">Your name<input type="text" id="in_name" autocomplete="username" placeholder="e.g. Maria K." required></label>
+        <label class="f">PIN<input type="password" id="in_pin" class="pin" inputmode="numeric" pattern="[0-9]*" maxlength="8" autocomplete="current-password" required></label>
+        <label class="switch"><input type="checkbox" id="in_remember"> Keep me signed in on this device <em class="muted">(only on your own phone)</em></label>
+        <button class="btn primary" type="submit" id="in_btn">Sign in</button>
+      </div>
+    </form>
+
+    <form id="formUp" autocomplete="off" hidden>
+      <div class="grid">
+        <label class="f">Full name<input type="text" id="up_name" placeholder="e.g. Maria Kyriakou" required></label>
+        <label class="f">Position<select id="up_role"><option value="employee">Barista</option><option value="supervisor">Supervisor</option></select></label>
+        <label class="f">Choose your PIN <em>4–8 digits</em><input type="password" id="up_pin" class="pin" inputmode="numeric" pattern="[0-9]*" maxlength="8" required></label>
+        <label class="f">Repeat your PIN<input type="password" id="up_pin2" class="pin" inputmode="numeric" pattern="[0-9]*" maxlength="8" required></label>
+        <div class="card" style="background:var(--bg);box-shadow:none;padding:12px">
+          <label class="f">Manager PIN <em>a manager types this to confirm you</em><input type="password" id="up_mpin" class="pin" inputmode="numeric" pattern="[0-9]*" maxlength="8"></label>
+          <p class="muted" style="margin:6px 0 0;font-size:12px">Setting up the very first account? Leave this empty. You’ll become the manager.</p>
+        </div>
+        <button class="btn primary" type="submit" id="up_btn">Create account</button>
+      </div>
+    </form>
+
+    <div id="authMsg" class="auth-msg" hidden></div>
+
+    <div class="demo-pick" id="demoPick" hidden>
+      <p class="muted" style="margin:0 0 8px"><b>Demo mode</b>: not connected to Google Sheets. Sign in with any name and PIN as:</p>
+      <select id="demoRole"><option value="employee">Barista</option><option value="supervisor">Supervisor</option><option value="manager">Manager</option></select>
+    </div>
+  </div>
+</section>
+
+<!-- ================= APP ================= -->
+<div id="app" hidden>
 <header class="top">
   <div class="wrap">
-    <div class="brand"><span class="cup"></span><span id="cafeName">Second Cup</span></div>
+    <div class="logo" id="headLogo"></div>
     <div class="spacer"></div>
-    <span id="connPill" class="pill demo">Demo mode</span>
-    <button class="iconbtn" id="openSettings" title="Settings" aria-label="Settings">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
-    </button>
+    <div class="chip"><b id="meName"></b><span class="role" id="meRole"></span></div>
+    <button class="hbtn" id="logout">Sign out</button>
   </div>
 </header>
 
 <div class="wrap">
   <nav class="tabs" id="tabs">
-    <button data-view="report" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>Daily report</button>
+    <button data-view="report" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>Report</button>
     <button data-view="schedule"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Schedule</button>
-    <button data-view="labor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>Labor cost</button>
-    <button data-view="staff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2M16 3.1a4 4 0 0 1 0 7.8M21 21v-2a4 4 0 0 0-3-3.9"/></svg>Staff</button>
+    <button data-view="labor" class="mgr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>Sales &amp; labor</button>
+    <button data-view="team" class="mgr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2M16 3.1a4 4 0 0 1 0 7.8M21 21v-2a4 4 0 0 0-3-3.9"/></svg>Team<span id="pendBadge" class="tag bad" hidden></span></button>
   </nav>
 
   <!-- ================= DAILY REPORT ================= -->
   <section class="view on" id="view-report">
     <h1 class="title">Daily report</h1>
-    <p class="sub">End-of-shift sales, cash-up and staff hours. Sent to Google Sheets when you sign off.</p>
+    <p class="sub">Fill in at close. When you sign, it’s saved to Google Sheets and emailed as a PDF.</p>
+    <div class="saved-banner" id="savedBanner" hidden><span id="savedText">✓ Report saved</span><a id="savedPdf" href="#" target="_blank" rel="noopener">Open PDF ↗</a></div>
 
     <form id="reportForm" class="grid report-grid" autocomplete="off">
-      <div class="grid">
+      <div class="grid sections">
         <div class="card">
-          <h2><span class="n">01</span>Shift</h2>
+          <h2>Shift</h2>
           <div class="row">
             <label class="f">Date<input type="date" id="r_date" required></label>
-            <label class="f">Shift
-              <select id="r_shift"><option>Full day</option><option>Morning</option><option>Evening</option></select>
-            </label>
-            <label class="f">Manager on duty<select id="r_manager"></select></label>
-            <label class="f">Customers / tickets<input type="number" id="r_customers" min="0" inputmode="numeric" placeholder="0"></label>
+            <label class="f">Shift<select id="r_shift"><option>Full day</option><option>Morning</option><option>Evening</option></select></label>
+            <label class="f">Duty manager / supervisor<select id="r_manager"></select></label>
+            <label class="f">Customers <em>(optional)</em><input type="number" id="r_customers" min="0" inputmode="numeric" placeholder="0"></label>
           </div>
         </div>
 
         <div class="card">
-          <h2><span class="n">02</span>Sales (from Z-report)</h2>
+          <h2>Z report</h2>
+          <p class="muted" style="margin:-4px 0 12px">Copy the figures from the POS Z report and the card machine’s Z report.</p>
           <div class="row">
-            <label class="f">Cash<div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" data-calc id="s_cash" placeholder="0.00"></div></label>
-            <label class="f">Card<div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" data-calc id="s_card" placeholder="0.00"></div></label>
-            <label class="f">Wolt<div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" data-calc id="s_wolt" placeholder="0.00"></div></label>
-            <label class="f">Foody<div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" data-calc id="s_foody" placeholder="0.00"></div></label>
-            <label class="f">Other / vouchers<div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" data-calc id="s_other" placeholder="0.00"></div></label>
+            <label class="f">Cash <em>POS Z report</em><div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" data-calc id="z_cash" placeholder="0.00"></div></label>
+            <label class="f">Visa <em>POS Z report</em><div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" data-calc id="z_visa" placeholder="0.00"></div></label>
+            <label class="f">POS total <em>cash + visa</em><div class="money"><input type="text" id="z_total" readonly tabindex="-1" value="0.00"></div></label>
           </div>
           <div class="hr"></div>
-          <div class="row">
-            <label class="f">Discounts<div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" data-calc id="d_discounts" placeholder="0.00"></div></label>
-            <label class="f">Refunds<div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" data-calc id="d_refunds" placeholder="0.00"></div></label>
-            <label class="f">Voids<div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" data-calc id="d_voids" placeholder="0.00"></div></label>
-            <label class="f">Staff meals / comps<div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" data-calc id="d_comps" placeholder="0.00"></div></label>
-          </div>
+          <label class="f">Card machine total <em>from the card machine’s Z report: the real card amount</em><div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" data-calc id="z_machine" placeholder="0.00"></div></label>
           <div class="lines">
-            <div class="line"><span>Gross sales</span><span id="o_gross">€0.00</span></div>
-            <div class="line"><span>− Discounts, refunds, voids</span><span id="o_ded">€0.00</span></div>
-            <div class="line total"><span>Net sales</span><span id="o_net">€0.00</span></div>
+            <div class="line"><span>Card difference <em class="muted">(machine − Visa)</em> <span id="o_difftag"></span></span><span id="o_diff">—</span></div>
           </div>
-        </div>
-
-        <div class="card">
-          <h2><span class="n">03</span>Cash drawer</h2>
-          <div class="row">
-            <label class="f">Opening float<div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" data-calc id="c_float" value="150.00"></div></label>
-            <label class="f">Cash counted<div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" data-calc id="c_counted" placeholder="0.00"></div></label>
-          </div>
-          <details class="denoms" id="denoms">
-            <summary>Count by notes &amp; coins</summary>
-            <div class="denom-grid" id="denomGrid"></div>
-            <p class="muted" style="margin:8px 0 0">Filling this in sets “Cash counted” automatically.</p>
-          </details>
+          <div class="hero"><div class="k">True cash<small>POS total − card machine</small></div><div class="v" id="o_true">€0.00</div></div>
           <div class="lines">
-            <div class="line"><span>Float + cash sales</span><span id="o_fcs">€0.00</span></div>
-            <div class="line"><span>− Paid outs</span><span id="o_po">€0.00</span></div>
-            <div class="line"><span>Expected in drawer</span><span id="o_expected">€0.00</span></div>
-            <div class="line total"><span>Over / short <span id="o_ostag"></span></span><span id="o_os">€0.00</span></div>
-            <div class="line"><span>Cash to bank (counted − float)</span><span id="o_bank">€0.00</span></div>
+            <div class="line"><span>Cash difference <em class="muted">(true cash − POS cash)</em></span><span id="o_cashdiff">—</span></div>
+            <div class="line"><span>True cash</span><span id="o_true3">€0.00</span></div>
+            <div class="line"><span>+ Card machine</span><span id="o_machine">€0.00</span></div>
+            <div class="line total"><span>TOTAL</span><span id="o_grand">€0.00</span></div>
           </div>
         </div>
 
         <div class="card">
-          <h2><span class="n">04</span>Paid outs / petty cash</h2>
-          <div id="payouts"></div>
-          <button type="button" class="btn sm" id="addPayout">+ Add paid out</button>
+          <h2>Count the float</h2>
+          <p class="muted" style="margin:-4px 0 12px">Add it up on the calculator, then tap <b>Use as float</b>. It should be <b id="floatTargetTxt">€150.00</b>.</p>
+          <label class="f">Float counted<div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" data-calc id="f_counted" placeholder="0.00"></div></label>
+          <div id="floatCalc"></div>
+          <div class="lines">
+            <div class="line"><span>Should be</span><span id="o_floatT">€150.00</span></div>
+            <div class="line total"><span>Difference <span id="o_floattag"></span></span><span id="o_floatD">—</span></div>
+          </div>
         </div>
 
         <div class="card">
-          <h2><span class="n">05</span>Staff on shift</h2>
-          <p class="muted" style="margin:-4px 0 12px">Pre-filled from this week’s schedule. Correct to actual times.</p>
+          <h2>Cash takings</h2>
+          <p class="muted" style="margin:-4px 0 12px">Cash going to the bank (without the float). Compared against true cash.</p>
+          <label class="f">Cash counted<div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" data-calc id="c_counted" placeholder="0.00"></div></label>
+          <details class="more"><summary>Use the calculator</summary><div id="cashCalc"></div></details>
+          <div class="lines">
+            <div class="line"><span>True cash <em class="muted">(expected)</em></span><span id="o_expected">€0.00</span></div>
+            <div class="line total"><span>Over / short <span id="o_ostag"></span></span><span id="o_os">—</span></div>
+          </div>
+        </div>
+
+        <div class="card sup">
+          <h2>Staff on shift <span class="lock">Supervisors</span></h2>
+          <p class="muted" style="margin:-4px 0 12px">Filled in from the schedule. Correct to actual times.</p>
           <div class="head-cols"><span>Name</span><span>In</span><span>Out</span><span>Break (min)</span><span></span></div>
           <div id="staffRows"></div>
           <div class="btnrow"><button type="button" class="btn sm" id="addStaffRow">+ Add person</button><button type="button" class="btn sm ghost" id="refillStaff">↺ Reload from schedule</button></div>
         </div>
 
         <div class="card">
-          <h2><span class="n">06</span>Notes, wastage &amp; incidents</h2>
+          <h2>Notes, wastage &amp; incidents</h2>
           <textarea id="r_notes" placeholder="e.g. Milk delivery late, 6 croissants wasted, card machine down 10–10:30…"></textarea>
         </div>
 
         <div class="card">
-          <h2><span class="n">07</span>Sign-off</h2>
-          <div class="row" style="margin-bottom:10px">
-            <label class="f">Signed by<select id="r_signedby"></select></label>
-          </div>
+          <h2>Sign off</h2>
+          <div class="signer"><span class="avatar" id="sigAvatar"></span><div><b id="sigName"></b><div class="muted">Signing as yourself</div></div></div>
           <div class="sig-wrap" id="sigWrap"><div class="base"></div><span class="hint">Sign here</span><canvas id="sig"></canvas></div>
-          <div class="btnrow" style="margin-top:10px;justify-content:space-between">
+          <div class="btnrow" style="margin-top:12px;justify-content:space-between">
             <button type="button" class="btn sm ghost" id="clearSig">Clear signature</button>
             <div class="btnrow">
               <button type="button" class="btn" id="resetReport">Reset</button>
-              <button type="submit" class="btn primary" id="submitReport">Sign &amp; submit report</button>
+              <button type="submit" class="btn accent" id="submitReport">Sign &amp; submit</button>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Live summary -->
       <aside class="card summary">
-        <h2>Today at a glance</h2>
-        <div class="kpi"><span class="k">Net sales</span><span class="v" id="k_net">€0</span></div>
-        <div class="kpi"><span class="k">Staff hours</span><span class="v" id="k_hours">0.0h</span></div>
-        <div class="kpi"><span class="k">Labor cost</span><span class="v" id="k_cost">€0</span></div>
-        <div class="kpi" style="display:block">
-          <div style="display:flex;justify-content:space-between;align-items:baseline"><span class="k">Labor %</span><span class="v" id="k_pct">—</span></div>
-          <div class="meter"><i id="k_meter"></i><b id="k_target"></b></div>
-          <div class="meter-legend"><span>0%</span><span id="k_tlabel">target 28%</span><span>60%</span></div>
+        <h2>At a glance</h2>
+        <div class="kpi big"><span class="k"><b>True cash</b></span><span class="v" id="k_true">€0</span></div>
+        <div class="kpi"><span class="k">Card machine</span><span class="v" id="k_machine">€0</span></div>
+        <div class="kpi"><span class="k"><b>Total</b></span><span class="v" id="k_total">€0</span></div>
+        <div class="kpi"><span class="k">Card difference</span><span class="v" id="k_diff">—</span></div>
+        <div class="kpi"><span class="k">Float difference</span><span class="v" id="k_float">—</span></div>
+        <div class="kpi"><span class="k">Cash over/short</span><span class="v" id="k_os">—</span></div>
+        <div class="kpi sup"><span class="k">Staff hours</span><span class="v" id="k_hours">0.0h</span></div>
+        <div class="mgr">
+          <div class="kpi"><span class="k">Labor cost</span><span class="v" id="k_cost">€0</span></div>
+          <div class="kpi" style="display:block">
+            <div style="display:flex;justify-content:space-between;align-items:baseline"><span class="k">Labor %</span><span class="v" id="k_pct">—</span></div>
+            <div class="meter"><i id="k_meter"></i><b id="k_target"></b></div>
+            <div class="muted" style="font-size:11px;text-align:right" id="k_tlabel"></div>
+          </div>
         </div>
-        <div class="kpi"><span class="k">Avg ticket</span><span class="v" id="k_avg">—</span></div>
-        <div class="kpi"><span class="k">Cash over/short</span><span class="v" id="k_os">€0</span></div>
       </aside>
     </form>
   </section>
 
   <!-- ================= SCHEDULE ================= -->
   <section class="view" id="view-schedule">
-    <h1 class="title">Weekly schedule</h1>
-    <p class="sub">Tap a cell to set a shift. Hours and cost use each person’s hourly wage.</p>
+    <h1 class="title">Schedule</h1>
+    <p class="sub mgr">Tap a cell to set a shift. Costs use each person’s hourly wage.</p>
+    <p class="sub not-mgr">Who’s working this week. Your shifts are highlighted.</p>
     <div class="weekbar">
       <button class="btn sm" data-week="-1">‹ Prev</button>
       <span class="label" id="weekLabel"></span>
       <button class="btn sm" data-week="1">Next ›</button>
       <div class="spacer"></div>
-      <button class="btn sm" id="copyPrev">Copy last week</button>
-      <button class="btn sm primary" id="saveSchedule">Save schedule</button>
+      <button class="btn sm mgr" id="copyPrev">Copy last week</button>
+      <button class="btn sm primary mgr" id="saveSchedule">Save schedule</button>
     </div>
-    <div class="sched-scroll"><table class="sched" id="schedTable"></table></div>
-    <p class="muted" style="margin-top:10px">Costs include the employer on-cost % set in Settings.</p>
+    <div class="mgr"><div class="sched-scroll"><table class="sched" id="schedTable"></table></div></div>
+    <div class="not-mgr"><span class="me-sum" id="meSum"></span><div class="daycards" id="dayCards"></div></div>
   </section>
 
-  <!-- ================= LABOR ================= -->
-  <section class="view" id="view-labor">
-    <h1 class="title">Labor cost</h1>
-    <p class="sub">Net sales from daily reports vs. what staff cost. Actual hours (from reports) win over scheduled hours.</p>
+  <!-- ================= SALES & LABOR ================= -->
+  <section class="view mgr" id="view-labor">
+    <h1 class="title">Sales &amp; labor</h1>
+    <p class="sub">Totals from daily reports, card differences, and labor cost against sales.</p>
     <div class="weekbar">
       <button class="btn sm" data-week="-1">‹ Prev</button>
       <span class="label" id="weekLabel2"></span>
       <button class="btn sm" data-week="1">Next ›</button>
     </div>
     <div class="tiles">
-      <div class="tile"><div class="k">Net sales</div><div class="v" id="t_net">€0</div><div class="d" id="t_netd"></div></div>
+      <div class="tile"><div class="k">Total sales</div><div class="v" id="t_total">€0</div><div class="d" id="t_totald"></div></div>
+      <div class="tile"><div class="k">True cash</div><div class="v" id="t_true">€0</div><div class="d" id="t_diffd"></div></div>
       <div class="tile"><div class="k">Labor cost</div><div class="v" id="t_cost">€0</div><div class="d" id="t_costd"></div></div>
       <div class="tile"><div class="k">Labor %</div><div class="v" id="t_pct">—</div><div class="d" id="t_pctd"></div></div>
-      <div class="tile"><div class="k">Sales / labor hr</div><div class="v" id="t_splh">—</div><div class="d">net sales ÷ hours</div></div>
     </div>
-    <div class="card" style="margin-bottom:14px">
-      <h2>Labor % by day</h2>
-      <div class="bars" id="bars"></div>
-    </div>
-    <div class="card">
-      <h2>Daily breakdown</h2>
-      <div class="tablewrap"><table class="data" id="laborTable"></table></div>
-    </div>
+    <div class="card" style="margin-bottom:14px"><h2>Labor % by day</h2><div class="bars" id="bars"></div></div>
+    <div class="card"><h2>Daily breakdown</h2><div class="tablewrap"><table class="data" id="laborTable"></table></div></div>
   </section>
 
-  <!-- ================= STAFF ================= -->
-  <section class="view" id="view-staff">
-    <h1 class="title">Staff &amp; wages</h1>
-    <p class="sub">Hourly wages used for every labor-cost calculation.</p>
+  <!-- ================= TEAM ================= -->
+  <section class="view mgr" id="view-team">
+    <h1 class="title">Team</h1>
+    <p class="sub">Roles, PIN resets and hourly wages.</p>
+    <div class="card" style="margin-bottom:14px">
+      <h2>Accounts</h2>
+      <div id="pendingList"></div>
+      <div id="acctList"></div>
+      <p class="muted" style="margin:10px 0 0"><b>Barista</b>: report + schedule · <b>Supervisor</b>: also staff on shift · <b>Manager</b>: everything. New staff sign up on the sign-in screen with your PIN.</p>
+      <div class="btnrow" style="justify-content:flex-end;margin-top:10px"><button class="btn sm primary" id="saveAccts">Save accounts</button></div>
+    </div>
     <div class="card">
-      <div class="head-cols" style="grid-template-columns:1.3fr 1fr 110px 90px 38px"><span>Name</span><span>Role</span><span>€ / hour</span><span>Active</span><span></span></div>
+      <h2>Wages</h2>
+      <div class="head-cols" style="grid-template-columns:1.3fr 1fr 110px 90px 40px"><span>Name</span><span>Role</span><span>€ / hour</span><span>On schedule</span><span></span></div>
       <div id="staffList"></div>
       <div class="btnrow" style="justify-content:space-between;margin-top:6px">
-        <button class="btn sm" id="addStaff">+ Add staff member</button>
-        <button class="btn sm primary" id="saveStaff">Save staff</button>
+        <button class="btn sm" id="addStaff">+ Add person</button>
+        <button class="btn sm primary" id="saveStaff">Save wages</button>
       </div>
     </div>
   </section>
+</div>
 </div>
 
 <!-- Shift modal -->
@@ -404,29 +521,8 @@ table.data tfoot td{font-weight:600;border-top:1.5px solid var(--ink);border-bot
     </div>
     <p class="muted" id="sm_calc" style="margin:10px 0 0"></p>
     <div class="btnrow" style="justify-content:space-between;margin-top:16px">
-      <button class="btn ghost" id="sm_off">Set day off</button>
+      <button class="btn ghost" id="sm_off">Day off</button>
       <div class="btnrow"><button class="btn" id="sm_cancel">Cancel</button><button class="btn primary" id="sm_ok">Set shift</button></div>
-    </div>
-  </div>
-</div>
-
-<!-- Settings modal -->
-<div class="scrim" id="settingsModal">
-  <div class="modal">
-    <h3>Settings</h3>
-    <p class="sub">Stored on this device only.</p>
-    <div class="grid">
-      <label class="f">Google Apps Script web app URL<input type="url" id="set_url" placeholder="https://script.google.com/macros/s/…/exec"></label>
-      <label class="f">Access PIN<input type="password" id="set_pin" placeholder="Same PIN as in Code.gs"></label>
-      <div class="row">
-        <label class="f">Target labor %<input type="number" id="set_target" min="1" max="100" step="0.5"></label>
-        <label class="f">Employer on-cost %<input type="number" id="set_oncost" min="0" max="100" step="0.1"></label>
-      </div>
-      <p class="muted" style="margin:0">On-cost covers employer social insurance and similar contributions added on top of the hourly wage. Ask your accountant for the right figure; leave at 0 to use wages only.</p>
-    </div>
-    <div class="btnrow" style="justify-content:space-between;margin-top:16px">
-      <button class="btn ghost" id="set_demo">Use demo data</button>
-      <div class="btnrow"><button class="btn" id="set_cancel">Cancel</button><button class="btn primary" id="set_ok">Save &amp; connect</button></div>
     </div>
   </div>
 </div>
@@ -435,204 +531,305 @@ table.data tfoot td{font-weight:600;border-top:1.5px solid var(--ink);border-bot
 
 <script>
 /* =========================================================
-   CONFIG — edit these for your café
+   CONFIG
    ========================================================= */
 const CONFIG = {
   CAFE_NAME: 'Second Cup',
-  // Paste your deployed Apps Script /exec URL here to hard-wire it for every device.
-  // (Leave blank to let each device enter it in Settings.)
-  API_URL: '',
-  DEFAULT_FLOAT: 150,
+  TAGLINE: 'Coffee Co.',
+  LOGO_URL: 'logo.png',     // upload the official logo to your GitHub repo with this name; falls back to the wordmark
+  API_URL: 'https://script.google.com/macros/s/AKfycbz2w7FVa0v1x-kS8uUEF-05thPR3Jv5dnbcFKtz4EtW2I7_asRjFpV5jYlt6bX7uBlX0g/exec',
+  FLOAT_TARGET: 150,        // overwritten by the server's value once signed in
   TARGET_LABOR_PCT: 28,
-  EMPLOYER_ONCOST_PCT: 0,
+  ONCOST_PCT: 0,
+  IDLE_LOGOUT_MIN: 15,      // shared-device safety: sign out after this many idle minutes (unless "keep me signed in")
   SHIFT_PRESETS: [
     {label:'Open 07–15', start:'07:00', end:'15:00', brk:30},
     {label:'Mid 10–18',  start:'10:00', end:'18:00', brk:30},
     {label:'Close 15–23',start:'15:00', end:'23:00', brk:30},
     {label:'Short 08–12',start:'08:00', end:'12:00', brk:0},
   ],
-  DENOMS: [50,20,10,5,2,1,0.5,0.2,0.1,0.05],
 };
 
-/* ---------- tiny helpers ---------- */
+/* ---------- helpers ---------- */
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const num = v => { const n = parseFloat(v); return isFinite(n) ? n : 0; };
+const r2 = n => Math.round(num(n)*100)/100;
 const eur = (n, d=2) => (n<0?'−':'') + '€' + Math.abs(n).toLocaleString('en-GB',{minimumFractionDigits:d,maximumFractionDigits:d});
 const pct = n => isFinite(n) ? (n*100).toFixed(1)+'%' : '—';
 const pad = n => String(n).padStart(2,'0');
 const iso = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const parseISO = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y,m-1,d); };
 const addDays = (d,n) => { const x = new Date(d); x.setDate(x.getDate()+n); return x; };
-const mondayOf = d => { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); const wd = (x.getDay()+6)%7; return addDays(x,-wd); };
+const mondayOf = d => { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); return addDays(x, -((x.getDay()+6)%7)); };
 const DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 const esc = s => String(s??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const uid = () => Math.random().toString(36).slice(2,9);
-
+const initials = n => String(n||'?').split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
 function hoursOf(start, end, brk){
   if(!start || !end) return 0;
   const [sh,sm] = start.split(':').map(Number), [eh,em] = end.split(':').map(Number);
-  let mins = (eh*60+em) - (sh*60+sm);
-  if(mins < 0) mins += 24*60;           // overnight shift
-  mins -= num(brk);
-  return Math.max(0, mins/60);
+  let mins = (eh*60+em) - (sh*60+sm); if(mins < 0) mins += 1440;
+  return Math.max(0, (mins - num(brk))/60);
 }
-
 const store = {
-  get(k, def){ try{ const v = localStorage.getItem('sc_'+k); return v==null ? def : JSON.parse(v); }catch(e){ return def; } },
-  set(k, v){ try{ localStorage.setItem('sc_'+k, JSON.stringify(v)); }catch(e){} },
+  get(k, def){ try{ const v = localStorage.getItem('sc3_'+k); return v==null ? def : JSON.parse(v); }catch(e){ return def; } },
+  set(k, v){ try{ localStorage.setItem('sc3_'+k, JSON.stringify(v)); }catch(e){} },
+  del(k){ try{ localStorage.removeItem('sc3_'+k); }catch(e){} },
 };
-
 function toast(msg, err){
   const t = $('#toast'); t.textContent = msg; t.className = 'toast on' + (err?' err':'');
-  clearTimeout(toast._t); toast._t = setTimeout(()=> t.className='toast', 2800);
+  clearTimeout(toast._t); toast._t = setTimeout(()=> t.className='toast', 3200);
 }
-
-/* ---------- settings ---------- */
-const settings = {
-  url: store.get('url', CONFIG.API_URL),
-  pin: store.get('pin', ''),
-  target: store.get('target', CONFIG.TARGET_LABOR_PCT),
-  oncost: store.get('oncost', CONFIG.EMPLOYER_ONCOST_PCT),
-};
-const isLive = () => !!settings.url;
-const costOf = (hours, wage) => hours * num(wage) * (1 + num(settings.oncost)/100);
+function renderLogo(el, dark){
+  el.innerHTML = `<span class="wordmark">${esc(CONFIG.CAFE_NAME)}<small>${esc(CONFIG.TAGLINE)}</small></span>`;
+  if(!CONFIG.LOGO_URL) return;
+  const img = new Image(); img.alt = CONFIG.CAFE_NAME;
+  img.onload = () => { el.innerHTML = ''; el.appendChild(img); };
+  img.src = CONFIG.LOGO_URL;
+}
+const isLive = () => !!CONFIG.API_URL && !window.__DEMO__;
+const rank = r => ({employee:1, supervisor:2, manager:3}[r] || 0);
+const roleLabel = r => r === 'employee' ? 'barista' : r;
 
 /* =========================================================
-   DATA LAYER — demo (in-memory) or live (Google Apps Script)
+   DEMO DATA (used when not connected)
    ========================================================= */
 const demo = (() => {
   const staff = [
-    {id:'s1', name:'Elena',   role:'Shift lead', wage:11.00, active:true},
-    {id:'s2', name:'Maria',   role:'Barista',    wage:9.50,  active:true},
-    {id:'s3', name:'Andreas', role:'Barista',    wage:9.00,  active:true},
-    {id:'s4', name:'Nikos',   role:'Kitchen',    wage:9.50,  active:true},
+    {id:'s1', name:'Ivan',    role:'Manager',    wage:12.00, active:true},
+    {id:'s2', name:'Elena',   role:'Supervisor', wage:10.50, active:true},
+    {id:'s3', name:'Maria',   role:'Barista',    wage:9.00,  active:true},
+    {id:'s4', name:'Andreas', role:'Barista',    wage:9.00,  active:true},
     {id:'s5', name:'Sofia',   role:'Barista',    wage:8.50,  active:true},
   ];
-  const pattern = { // per weekday index: [name, start, end, brk]
+  const users = [
+    {name:'Ivan', role:'manager', created:'2026-10-24', approvedBy:'(first account)'},
+    {name:'Elena', role:'supervisor', created:'2026-10-24', approvedBy:'Ivan'},
+    {name:'Maria', role:'employee', created:'2026-10-24', approvedBy:'Ivan'},
+    {name:'Andreas', role:'employee', created:'2026-10-24', approvedBy:'Ivan'},
+    {name:'Giorgos P.', role:'pending', created:'2026-10-24', approvedBy:''},
+  ];
+  const pattern = {
     0:[['Elena','07:00','15:00',30],['Maria','07:00','15:00',30],['Andreas','15:00','23:00',30]],
-    1:[['Elena','07:00','15:00',30],['Sofia','10:00','18:00',30],['Andreas','15:00','23:00',30]],
-    2:[['Maria','07:00','15:00',30],['Nikos','08:00','16:00',30],['Sofia','15:00','23:00',30]],
-    3:[['Elena','07:00','15:00',30],['Maria','10:00','18:00',30],['Andreas','15:00','23:00',30]],
-    4:[['Elena','07:00','15:00',30],['Nikos','08:00','16:00',30],['Maria','15:00','23:00',30],['Sofia','17:00','23:00',0]],
-    5:[['Elena','08:00','16:00',30],['Maria','08:00','16:00',30],['Nikos','09:00','17:00',30],['Andreas','15:00','23:00',30],['Sofia','16:00','23:00',30]],
-    6:[['Maria','08:00','16:00',30],['Nikos','09:00','15:00',0],['Sofia','15:00','22:00',30]],
+    1:[['Ivan','07:00','15:00',30],['Sofia','10:00','18:00',30],['Andreas','15:00','23:00',30]],
+    2:[['Maria','07:00','15:00',30],['Elena','08:00','16:00',30],['Sofia','15:00','23:00',30]],
+    3:[['Ivan','07:00','15:00',30],['Maria','10:00','18:00',30],['Andreas','15:00','23:00',30]],
+    4:[['Elena','07:00','15:00',30],['Ivan','08:00','16:00',30],['Maria','15:00','23:00',30],['Sofia','17:00','23:00',0]],
+    5:[['Elena','08:00','16:00',30],['Maria','08:00','16:00',30],['Ivan','09:00','17:00',30],['Andreas','15:00','23:00',30],['Sofia','16:00','23:00',30]],
+    6:[['Maria','08:00','16:00',30],['Elena','09:00','15:00',0],['Sofia','15:00','22:00',30]],
   };
   const shifts = [], reports = [];
-  const thisMon = mondayOf(new Date());
-  [-7, 0].forEach(off => {
-    for(let i=0;i<7;i++){
-      const date = iso(addDays(thisMon, off+i));
-      pattern[i].forEach(([name,start,end,brk]) => shifts.push({date, name, start, end, brk}));
-    }
-  });
-  // reports for past days (last week + this week up to yesterday)
-  const today = new Date(); today.setHours(0,0,0,0);
+  const thisMon = mondayOf(new Date()), today = new Date(); today.setHours(0,0,0,0);
+  [-7,0].forEach(off => { for(let i=0;i<7;i++){ const date = iso(addDays(thisMon, off+i)); pattern[i].forEach(([name,start,end,brk]) => shifts.push({date,name,start,end,brk})); } });
   const base = [980,1040,1010,1120,1480,1720,1390];
   for(let off=-7; off<7; off++){
-    const d = addDays(thisMon, off);
-    if(d >= today) break;
-    const i = (d.getDay()+6)%7, jitter = 0.9 + ((off*37)%20)/100;
-    const gross = Math.round(base[i]*jitter);
-    const cash = Math.round(gross*.28), wolt = Math.round(gross*.12), foody = Math.round(gross*.06), other = 0;
-    const card = gross - cash - wolt - foody;
-    const ded = Math.round(gross*.02);
-    const date = iso(d);
-    reports.push({ date, shift:'Full day', manager:'Elena', customers: Math.round(gross/7.4),
-      sales:{cash,card,wolt,foody,other}, gross, discounts:ded, refunds:0, voids:0, comps:12, net: gross-ded,
-      staff: pattern[i].map(([name,start,end,brk]) => ({name,start,end,brk: i===5 && name==='Sofia' ? 0 : brk})) });
+    const d = addDays(thisMon, off); if(d >= today) break;
+    const i = (d.getDay()+6)%7, total = Math.round(base[i]*(0.9 + ((off*37)%20)/100));
+    const visa = Math.round(total*.66), machine = visa + [0,4.5,-2,0,7.2,-3.4,1][i];
+    reports.push({ date: iso(d), shift:'Full day', total, cardDiff: r2(machine-visa), trueCash: r2(total-machine), overShort: [0,-2,0,1.5,0,-4,0][i], pdf:'',
+      staff: pattern[i].map(([name,start,end,brk]) => ({name,start,end,brk})) });
   }
-  return { staff, shifts, reports };
+  return { staff, users, shifts, reports };
 })();
 
-const api = {
-  async load(weekStart){
-    if(!isLive()){
-      const end = iso(addDays(parseISO(weekStart),6));
-      const inWeek = r => r.date >= weekStart && r.date <= end;
-      return { staff: demo.staff, shifts: demo.shifts.filter(inWeek), reports: demo.reports.filter(inWeek) };
-    }
-    const u = `${settings.url}?action=load&week=${encodeURIComponent(weekStart)}&pin=${encodeURIComponent(settings.pin)}`;
-    const res = await fetch(u); const j = await res.json();
-    if(!j.ok) throw new Error(j.error || 'Load failed');
-    return j.data;
-  },
-  async post(action, data){
-    if(!isLive()) return { ok:true, demo:true };
-    // text/plain avoids a CORS pre-flight, which Apps Script can't answer
-    const res = await fetch(settings.url, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body: JSON.stringify({ action, pin: settings.pin, data }) });
-    const j = await res.json();
-    if(!j.ok) throw new Error(j.error || 'Save failed');
-    return j;
-  },
-  async saveReport(r){
-    if(!isLive()){ demo.reports = demo.reports.filter(x => !(x.date===r.date && x.shift===r.shift)); demo.reports.push(r); }
-    return this.post('saveReport', r);
-  },
-  async saveSchedule(weekStart, shifts){
-    if(!isLive()){ const end = iso(addDays(parseISO(weekStart),6));
-      demo.shifts = demo.shifts.filter(s => s.date < weekStart || s.date > end).concat(shifts); }
-    return this.post('saveSchedule', { weekStart, shifts });
-  },
-  async saveStaff(staff){
-    if(!isLive()){ demo.staff = staff; }
-    return this.post('saveStaff', staff);
-  },
-};
+/* =========================================================
+   API
+   ========================================================= */
+let session = null;   // {name, pin, role}
+async function call(action, data, cred){
+  const c = cred || session || {};
+  if(!isLive()) return demoCall(action, data, c);
+  // text/plain avoids a CORS pre-flight, which Apps Script can't answer
+  const res = await fetch(CONFIG.API_URL, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body: JSON.stringify({ action, name: c.name, pin: c.pin, data }) });
+  const j = await res.json();
+  if(!j.ok) throw new Error(j.error || 'Request failed');
+  return j.data;
+}
+function demoCall(action, data, c){
+  const role = $('#demoRole').value;
+  if(action === 'signup'){ if(!c.managerPin) throw new Error('A manager must enter their PIN to confirm this sign-up'); return { role:c.role, message:`(Demo) Account created as ${roleLabel(c.role)}. Sign in now.` }; }
+  if(action === 'login') return { user:{ name: c.name, role } };
+  const r = session ? session.role : role;
+  if(action === 'load'){
+    const end = iso(addDays(parseISO(data.week),6)), inWeek = x => x.date >= data.week && x.date <= end;
+    const config = { floatTarget: CONFIG.FLOAT_TARGET, targetPct: CONFIG.TARGET_LABOR_PCT, oncostPct: CONFIG.ONCOST_PCT };
+    if(r !== 'manager') return { user:{name:c.name, role:r}, config, reports:[], shifts: demo.shifts.filter(inWeek),
+      staff: demo.staff.filter(s=>s.active!==false).map(s => ({name:s.name, role:s.role, active:true})) };
+    return { user:{name:c.name, role:r}, config, staff: demo.staff, shifts: demo.shifts.filter(inWeek), reports: demo.reports.filter(inWeek), users: demo.users };
+  }
+  if(action === 'saveReport'){ const total = r2(num(data.cash)+num(data.visa)), machine = r2(data.cardMachine);
+    demo.reports = demo.reports.filter(x => !(x.date===data.date && x.shift===data.shift));
+    demo.reports.push({ date:data.date, shift:data.shift, total, trueCash:r2(total-machine), cardDiff:r2(machine-num(data.visa)), overShort:0, staff:data.staff||[], pdf:'' });
+    return { saved:true, pdf:'', emailed:'demo' }; }
+  if(action === 'saveSchedule'){ const end = iso(addDays(parseISO(data.weekStart),6)); demo.shifts = demo.shifts.filter(s => s.date < data.weekStart || s.date > end).concat(data.shifts); return {saved:true}; }
+  if(action === 'saveStaff'){ demo.staff = data; return {saved:true}; }
+  if(action === 'saveUsers'){ data.forEach(u => { const i = demo.users.findIndex(x=>x.name===u.name); if(i<0) return; if(u.remove) demo.users.splice(i,1); else demo.users[i].role = u.role; }); return {saved:true}; }
+  throw new Error('Unknown action');
+}
 
-/* ---------- app state ---------- */
-const state = {
-  week: iso(mondayOf(new Date())),
-  staff: [], shifts: [], reports: [],
-  draftShifts: [],   // schedule being edited
-};
+/* =========================================================
+   AUTH
+   ========================================================= */
+function authMsg(text, ok){ const m = $('#authMsg'); m.hidden = !text; m.textContent = text || ''; m.className = 'auth-msg ' + (ok?'ok':'err'); }
+function seg(up){ $('#segIn').classList.toggle('on', !up); $('#segUp').classList.toggle('on', up); $('#formIn').hidden = up; $('#formUp').hidden = !up; authMsg(''); }
+$('#segIn').onclick = () => seg(false);
+$('#segUp').onclick = () => seg(true);
+
+$('#formIn').addEventListener('submit', async e => {
+  e.preventDefault();
+  const cred = { name: $('#in_name').value.trim(), pin: $('#in_pin').value.trim() };
+  if(!/^\d{4,8}$/.test(cred.pin)) return authMsg('PIN must be 4–8 digits');
+  const b = $('#in_btn'); b.disabled = true; b.textContent = 'Signing in…';
+  try{
+    const d = await call('login', null, cred);
+    session = { ...cred, name: d.user.name, role: d.user.role };
+    if($('#in_remember').checked) store.set('session', session); else store.del('session');
+    $('#in_pin').value = ''; authMsg('');
+    enterApp();
+  }catch(err){ authMsg(err.message); }
+  b.disabled = false; b.textContent = 'Sign in';
+});
+
+$('#formUp').addEventListener('submit', async e => {
+  e.preventDefault();
+  const name = $('#up_name').value.trim(), pin = $('#up_pin').value.trim(), managerPin = $('#up_mpin').value.trim(), role = $('#up_role').value;
+  if(name.length < 2) return authMsg('Enter your full name');
+  if(!/^\d{4,8}$/.test(pin)) return authMsg('PIN must be 4–8 digits');
+  if(pin !== $('#up_pin2').value.trim()) return authMsg('PINs don’t match');
+  const b = $('#up_btn'); b.disabled = true; b.textContent = 'Creating…';
+  try{
+    let d;
+    if(isLive()){
+      const res = await fetch(CONFIG.API_URL, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify({action:'signup', name, pin, role, managerPin})});
+      const j = await res.json(); if(!j.ok) throw new Error(j.error); d = j.data;
+    } else d = demoCall('signup', null, {name, pin, role, managerPin});
+    seg(false); $('#in_name').value = name; authMsg(d.message, true);
+    ['#up_name','#up_pin','#up_pin2','#up_mpin'].forEach(s => $(s).value = '');
+  }catch(err){ authMsg(err.message); }
+  b.disabled = false; b.textContent = 'Create account';
+});
+
+function logout(msg){
+  session = null; store.del('session');
+  $('#app').hidden = true; $('#auth').hidden = false;
+  document.body.className = '';
+  if(msg) authMsg(msg, true);
+}
+$('#logout').onclick = () => logout();
+
+// idle sign-out for shared devices
+let idleT;
+function bumpIdle(){
+  clearTimeout(idleT);
+  if(!session || store.get('session')) return;
+  idleT = setTimeout(() => logout('Signed out after ' + CONFIG.IDLE_LOGOUT_MIN + ' minutes of inactivity.'), CONFIG.IDLE_LOGOUT_MIN*60000);
+}
+['pointerdown','keydown'].forEach(ev => document.addEventListener(ev, bumpIdle, {passive:true}));
+
+/* =========================================================
+   STATE + LOAD
+   ========================================================= */
+const state = { week: iso(mondayOf(new Date())), staff:[], shifts:[], reports:[], users:[], draftShifts:[], cfg:{} };
 const wageOf = name => num((state.staff.find(s => s.name === name) || {}).wage);
+const costOf = (h, w) => h * num(w) * (1 + num(state.cfg.oncostPct)/100);
 const activeStaff = () => state.staff.filter(s => s.active !== false);
+const floatTarget = () => num(state.cfg.floatTarget ?? CONFIG.FLOAT_TARGET);
 
 async function loadWeek(){
   document.body.classList.add('loading');
   try{
-    const d = await api.load(state.week);
-    state.staff = d.staff || []; state.shifts = d.shifts || []; state.reports = d.reports || [];
+    const d = await call('load', { week: state.week });
+    if(d.user && d.user.role !== session.role){ session.role = d.user.role; applyRole(); }
+    state.cfg = d.config || {};
+    state.staff = d.staff || []; state.shifts = d.shifts || []; state.reports = d.reports || []; state.users = d.users || [];
     state.draftShifts = state.shifts.map(s => ({...s}));
-  }catch(e){ toast('Couldn’t reach Google Sheets: ' + e.message, true); }
+  }catch(e){
+    if(/PIN|approve|disabled/i.test(e.message)) return logout(e.message);
+    toast('Couldn’t reach Google Sheets: ' + e.message, true);
+  }
   document.body.classList.remove('loading');
   renderAll();
 }
 
+function applyRole(){
+  document.body.classList.remove('r-employee','r-supervisor','r-manager');
+  document.body.classList.add('r-' + session.role);
+  $('#meName').textContent = session.name;
+  $('#meRole').textContent = (isLive() ? '' : 'Demo · ') + roleLabel(session.role);
+  $('#meRole').className = 'role' + (isLive() ? '' : ' demo');
+  $('#sigName').textContent = session.name;
+  $('#sigAvatar').textContent = initials(session.name);
+  const cur = store.get('view','report');
+  show(['labor','team'].includes(cur) && session.role !== 'manager' ? 'report' : cur);
+}
+
+let booted = false;
+async function enterApp(){
+  $('#auth').hidden = true; $('#app').hidden = false;
+  applyRole(); bumpIdle();
+  await loadWeek();
+  if(!booted){ booted = true; }
+  resetReport();
+}
+
+/* =========================================================
+   KEYPAD CALCULATOR (reusable)
+   ========================================================= */
+function evalExpr(tokens){
+  // tokens: numbers and + − × ÷ ; respects × ÷ before + −
+  const t = tokens.slice(); if(typeof t[t.length-1] === 'string') t.pop();
+  if(!t.length) return 0;
+  const a = [t[0]];
+  for(let i=1;i<t.length;i+=2){ const op = t[i], n = t[i+1];
+    if(op==='×') a[a.length-1] *= n; else if(op==='÷') a[a.length-1] = n===0 ? NaN : a[a.length-1]/n; else a.push(op, n); }
+  let r = a[0]; for(let i=1;i<a.length;i+=2) r = a[i]==='+' ? r + a[i+1] : r - a[i+1];
+  return Math.round(r*100)/100;
+}
+function makeKeypad(el, useLabel, onUse){
+  let tokens = [], cur = '', justEq = false;
+  el.innerHTML = `<div class="kcalc"><div class="disp"><div class="expr"></div><div class="res">0</div></div><div class="keys">
+    <button type="button" class="fn" data-k="C">C</button><button type="button" class="fn" data-k="⌫">⌫</button><button type="button" class="fn" data-k="%">%</button><button type="button" class="op" data-k="÷">÷</button>
+    <button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button><button type="button" class="op" data-k="×">×</button>
+    <button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button><button type="button" class="op" data-k="−">−</button>
+    <button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button><button type="button" class="op" data-k="+">+</button>
+    <button type="button" data-k="0" style="grid-column:span 2">0</button><button type="button" data-k=".">.</button><button type="button" class="eq" data-k="=">=</button>
+  </div><button type="button" class="use">${useLabel}</button></div>`;
+  const expr = el.querySelector('.expr'), res = el.querySelector('.res');
+  const all = () => cur === '' ? tokens : tokens.concat([num(cur)]);
+  const fmt = n => isFinite(n) ? n.toLocaleString('en-GB',{maximumFractionDigits:2}) : 'Error';
+  const calcNow = () => evalExpr(all());
+  const paint = () => {
+    expr.textContent = all().map(x => typeof x === 'number' ? fmt(x) : ' '+x+' ').join('') + (cur.endsWith('.') ? '.' : '');
+    res.textContent = !tokens.length && cur !== '' ? cur : fmt(calcNow());
+  };
+  el.querySelectorAll('.keys button').forEach(b => b.onclick = () => {
+    const k = b.dataset.k;
+    if(/[0-9]/.test(k)){ if(justEq){ tokens=[]; cur=''; justEq=false; } if(cur.replace('.','').length < 9) cur = (cur==='0' ? '' : cur) + k; }
+    else if(k === '.'){ if(justEq){ tokens=[]; cur=''; justEq=false; } if(!cur.includes('.')) cur = (cur||'0') + '.'; }
+    else if(k === 'C'){ tokens=[]; cur=''; justEq=false; }
+    else if(k === '⌫'){ if(cur) cur = cur.slice(0,-1); else if(tokens.length){ const last = tokens.pop(); if(typeof last === 'string' && tokens.length){ cur = String(tokens.pop()); } } }
+    else if(k === '%'){ if(cur) cur = String(num(cur)/100); }
+    else if(k === '='){ const v = calcNow(); tokens=[]; cur = isFinite(v) ? String(v) : ''; justEq = true; }
+    else { justEq = false; if(cur !== ''){ tokens.push(num(cur)); cur=''; } if(!tokens.length) tokens.push(0); if(typeof tokens[tokens.length-1] === 'string') tokens[tokens.length-1] = k; else tokens.push(k); }
+    paint();
+  });
+  el.querySelector('.use').onclick = () => { const v = calcNow(); if(!isFinite(v)) return toast('Calculator error', true); onUse(Math.max(0, v)); tokens=[]; cur = v ? String(v) : ''; justEq = true; paint(); };
+  paint();
+  return { reset(){ tokens=[]; cur=''; justEq=false; paint(); } };
+}
+const floatPad = makeKeypad($('#floatCalc'), 'Use as float ↑', v => { $('#f_counted').value = v.toFixed(2); calc(); toast('Float set to ' + eur(v)); });
+const cashPad  = makeKeypad($('#cashCalc'),  'Use as cash counted ↑', v => { $('#c_counted').value = v.toFixed(2); calc(); toast('Cash counted set to ' + eur(v)); });
+
 /* =========================================================
    DAILY REPORT
    ========================================================= */
-function staffOptions(sel){
-  return '<option value="">— select —</option>' + activeStaff().map(s => `<option ${s.name===sel?'selected':''}>${esc(s.name)}</option>`).join('');
-}
+const staffOptions = sel => '<option value="">— select —</option>' + activeStaff().map(s => `<option ${s.name===sel?'selected':''}>${esc(s.name)}</option>`).join('');
 function fillSelects(){
-  const m = $('#r_manager').value, sb = $('#r_signedby').value;
-  $('#r_manager').innerHTML = staffOptions(m || (activeStaff().find(s=>/lead|manager/i.test(s.role))||{}).name);
-  $('#r_signedby').innerHTML = staffOptions(sb || $('#r_manager').value);
+  const m = $('#r_manager').value;
+  $('#r_manager').innerHTML = staffOptions(m || (rank(session.role)>=2 ? session.name : (activeStaff().find(s=>/lead|super|manag/i.test(s.role))||{}).name));
 }
-
-function buildDenoms(){
-  $('#denomGrid').innerHTML = CONFIG.DENOMS.map(d =>
-    `<label class="denom"><b>${d>=1?'€'+d:(d*100)+'c'}</b> × <input type="number" min="0" inputmode="numeric" data-denom="${d}" placeholder="0"></label>`).join('');
-  $$('[data-denom]').forEach(i => i.addEventListener('input', () => {
-    const tot = $$('[data-denom]').reduce((a,i) => a + num(i.value)*num(i.dataset.denom), 0);
-    $('#c_counted').value = tot ? tot.toFixed(2) : '';
-    calc();
-  }));
-}
-
-function addPayoutRow(p={desc:'',amt:''}){
-  const el = document.createElement('div'); el.className = 'drow';
-  el.innerHTML = `<input type="text" placeholder="What for? e.g. Milk top-up" value="${esc(p.desc)}" data-pdesc>
-    <div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" placeholder="0.00" value="${esc(p.amt)}" data-pamt></div>
-    <button type="button" class="x" aria-label="Remove">✕</button>`;
-  el.querySelector('.x').onclick = () => { el.remove(); calc(); };
-  el.querySelector('[data-pamt]').oninput = calc;
-  $('#payouts').appendChild(el);
-}
-
 function addStaffRow(s={name:'',start:'',end:'',brk:0}){
   const el = document.createElement('div'); el.className = 'srow';
   el.innerHTML = `<select data-sname>${staffOptions(s.name)}</select>
@@ -640,61 +837,65 @@ function addStaffRow(s={name:'',start:'',end:'',brk:0}){
     <input type="time" step="300" value="${esc(s.end)}" data-send aria-label="Out">
     <input type="number" min="0" step="5" value="${esc(s.brk)}" data-sbrk aria-label="Break minutes">
     <button type="button" class="x" aria-label="Remove">✕</button>
-    <div class="meta"><span data-shours></span><span data-scost></span></div>`;
+    <div class="meta"><span data-shours></span><span data-scost class="mgr"></span></div>`;
   el.querySelector('.x').onclick = () => { el.remove(); calc(); };
   el.querySelectorAll('input,select').forEach(i => i.addEventListener('input', calc));
   $('#staffRows').appendChild(el);
 }
-
 function fillStaffFromSchedule(){
   $('#staffRows').innerHTML = '';
-  const date = $('#r_date').value;
-  // look in loaded week first, fallback to draft
-  const list = state.shifts.filter(s => s.date === date);
+  const list = state.shifts.filter(s => s.date === $('#r_date').value);
   if(list.length) list.forEach(s => addStaffRow(s)); else addStaffRow();
   calc();
 }
 
 function readReport(){
-  const sales = { cash:num($('#s_cash').value), card:num($('#s_card').value), wolt:num($('#s_wolt').value), foody:num($('#s_foody').value), other:num($('#s_other').value) };
-  const gross = Object.values(sales).reduce((a,b)=>a+b,0);
-  const discounts = num($('#d_discounts').value), refunds = num($('#d_refunds').value), voids = num($('#d_voids').value), comps = num($('#d_comps').value);
-  const net = gross - discounts - refunds - voids;
-  const payouts = $$('#payouts .drow').map(r => ({ desc: r.querySelector('[data-pdesc]').value.trim(), amt: num(r.querySelector('[data-pamt]').value) })).filter(p => p.desc || p.amt);
-  const payoutsTotal = payouts.reduce((a,p)=>a+p.amt,0);
-  const float = num($('#c_float').value), counted = num($('#c_counted').value);
-  const expectedCash = float + sales.cash - payoutsTotal;
-  const overShort = counted - expectedCash;
-  const staff = $$('#staffRows .srow').map(r => ({
-    name: r.querySelector('[data-sname]').value, start: r.querySelector('[data-sstart]').value,
-    end: r.querySelector('[data-send]').value, brk: num(r.querySelector('[data-sbrk]').value) })).filter(s => s.name);
-  staff.forEach(s => { s.hours = +hoursOf(s.start,s.end,s.brk).toFixed(2); s.wage = wageOf(s.name); s.cost = +costOf(s.hours, s.wage).toFixed(2); });
-  const laborHours = staff.reduce((a,s)=>a+s.hours,0), laborCost = staff.reduce((a,s)=>a+s.cost,0);
+  const cash = r2($('#z_cash').value), visa = r2($('#z_visa').value), cardMachine = r2($('#z_machine').value);
+  const posTotal = r2(cash + visa), cardDiff = r2(cardMachine - visa);
+  const trueCash = r2(posTotal - cardMachine);   // TRUE CASH = POS total − card machine
+  const cashDiff = r2(trueCash - cash);          // real cash vs POS cash
+  const total = r2(trueCash + cardMachine);      // TOTAL = true cash + card machine
+  const floatCount = $('#f_counted').value === '' ? 0 : r2($('#f_counted').value);
+  const sup = rank(session.role) >= 2;
+  const staff = sup ? $$('#staffRows .srow').map(r => ({ name: r.querySelector('[data-sname]').value, start: r.querySelector('[data-sstart]').value,
+    end: r.querySelector('[data-send]').value, brk: num(r.querySelector('[data-sbrk]').value) })).filter(s => s.name) : [];
+  staff.forEach(s => { s.hours = r2(hoursOf(s.start,s.end,s.brk)); });
+  const laborHours = staff.reduce((a,s)=>a+s.hours,0), laborCost = staff.reduce((a,s)=>a+costOf(s.hours, wageOf(s.name)),0);
+  const hasCount = $('#c_counted').value !== '';
+  const cashCounted = hasCount ? r2($('#c_counted').value) : '';
   return {
-    date: $('#r_date').value, shift: $('#r_shift').value, manager: $('#r_manager').value,
-    customers: num($('#r_customers').value), sales, gross, discounts, refunds, voids, comps, net,
-    float, counted, payouts, payoutsTotal, expectedCash, overShort, cashToBank: counted - float,
-    staff, laborHours, laborCost, laborPct: net ? laborCost/net : null,
-    notes: $('#r_notes').value.trim(), signedBy: $('#r_signedby').value,
+    date: $('#r_date').value, shift: $('#r_shift').value, manager: $('#r_manager').value, customers: num($('#r_customers').value),
+    cash, visa, posTotal, cardMachine, cardDiff, trueCash, cashDiff, total,
+    floatCounted: floatCount, floatDiff: r2(floatCount - floatTarget()),
+    staff, laborHours, laborCost,
+    cashCounted, overShort: hasCount ? r2(cashCounted - trueCash) : null,
+    notes: $('#r_notes').value.trim(),
   };
 }
+function diffTag(v, small=2){ return Math.abs(v) < 0.005 ? '<span class="tag ok">Balanced</span>' : Math.abs(v) <= small ? '<span class="tag warn">Small</span>' : `<span class="tag bad">${v>0?'Over':'Short'}</span>`; }
+function setSigned(el, v, empty){ el.textContent = empty ? '—' : eur(v); el.className = (el.className.replace(/\b(pos|neg)\b/g,'').trim() + ' ' + (empty || Math.abs(v)<0.005 ? '' : v>0 ? 'pos' : 'neg')).trim(); }
 
 function calc(){
+  if(!session) return;
   const r = readReport();
-  $('#o_gross').textContent = eur(r.gross);
-  $('#o_ded').textContent = eur(r.discounts + r.refunds + r.voids);
-  $('#o_net').textContent = eur(r.net);
-  $('#o_fcs').textContent = eur(r.float + r.sales.cash);
-  $('#o_po').textContent = eur(r.payoutsTotal);
-  $('#o_expected').textContent = eur(r.expectedCash);
-  const hasCount = $('#c_counted').value !== '';
-  const os = $('#o_os'); os.textContent = hasCount ? eur(r.overShort) : '—';
-  os.className = !hasCount ? '' : Math.abs(r.overShort) < 0.005 ? '' : r.overShort > 0 ? 'pos' : 'neg';
-  $('#o_ostag').innerHTML = !hasCount ? '' : Math.abs(r.overShort) < 0.005 ? '<span class="tag ok">Balanced</span>' :
-    Math.abs(r.overShort) <= 2 ? '<span class="tag warn">Minor</span>' : `<span class="tag bad">${r.overShort>0?'Over':'Short'}</span>`;
-  $('#o_bank').textContent = hasCount ? eur(r.cashToBank) : '—';
+  $('#z_total').value = r.posTotal.toFixed(2);
+  const zEntered = $('#z_machine').value !== '';
+  setSigned($('#o_diff'), r.cardDiff, !zEntered);
+  $('#o_difftag').innerHTML = zEntered ? (Math.abs(r.cardDiff) < 0.005 ? '<span class="tag ok">Matches</span>' : `<span class="tag ${Math.abs(r.cardDiff)<=5?'warn':'bad'}">${r.cardDiff>0?'Machine higher':'POS higher'}</span>`) : '';
+  $('#o_true').textContent = eur(r.trueCash); $('#o_true3').textContent = eur(r.trueCash);
+  setSigned($('#o_cashdiff'), r.cashDiff, !zEntered);
+  $('#o_machine').textContent = eur(r.cardMachine); $('#o_grand').textContent = eur(r.total);
 
-  // per-row hours
+  const ft = floatTarget(), counted = $('#f_counted').value !== '';
+  $('#floatTargetTxt').textContent = eur(ft); $('#o_floatT').textContent = eur(ft);
+  setSigned($('#o_floatD'), r.floatDiff, !counted);
+  $('#o_floattag').innerHTML = counted ? diffTag(r.floatDiff, 1) : '';
+
+  $('#o_expected').textContent = eur(r.trueCash);
+  const hasCount = r.overShort !== null;
+  setSigned($('#o_os'), r.overShort, !hasCount);
+  $('#o_ostag').innerHTML = hasCount ? diffTag(r.overShort) : '';
+
   $$('#staffRows .srow').forEach(row => {
     const name = row.querySelector('[data-sname]').value;
     const h = hoursOf(row.querySelector('[data-sstart]').value, row.querySelector('[data-send]').value, row.querySelector('[data-sbrk]').value);
@@ -702,55 +903,48 @@ function calc(){
     row.querySelector('[data-scost]').textContent = name && h ? `${eur(wageOf(name))}/h → ${eur(costOf(h, wageOf(name)))}` : '';
   });
 
-  $('#k_net').textContent = eur(r.net,0);
+  $('#k_total').textContent = eur(r.total);
+  $('#k_machine').textContent = eur(r.cardMachine);
+  setSigned($('#k_diff'), r.cardDiff, !zEntered);
+  $('#k_true').textContent = eur(r.trueCash);
+  setSigned($('#k_float'), r.floatDiff, !counted);
+  setSigned($('#k_os'), r.overShort, !hasCount);
   $('#k_hours').textContent = r.laborHours.toFixed(1)+'h';
   $('#k_cost').textContent = eur(r.laborCost,0);
-  const p = r.laborPct, t = num(settings.target)/100;
-  $('#k_pct').textContent = p==null ? '—' : pct(p);
-  $('#k_pct').className = 'v ' + (p==null ? '' : p > t ? 'neg' : 'pos');
+  const p = r.total ? r.laborCost / r.total : null, t = num(state.cfg.targetPct ?? CONFIG.TARGET_LABOR_PCT)/100;
+  $('#k_pct').textContent = p==null ? '—' : pct(p); $('#k_pct').className = 'v ' + (p==null ? '' : p > t ? 'neg' : 'pos');
   $('#k_meter').style.width = (p==null ? 0 : Math.min(100, p/0.6*100)) + '%';
   $('#k_meter').style.background = p!=null && p > t ? 'var(--bad)' : 'var(--ok)';
   $('#k_target').style.left = Math.min(100, t/0.6*100) + '%';
-  $('#k_tlabel').textContent = 'target ' + num(settings.target) + '%';
-  $('#k_avg').textContent = r.customers ? eur(r.net / r.customers) : '—';
-  $('#k_os').textContent = hasCount ? eur(r.overShort) : '—';
-  $('#k_os').className = 'v ' + (!hasCount || Math.abs(r.overShort)<0.005 ? '' : r.overShort>0 ? 'pos' : 'neg');
+  $('#k_tlabel').textContent = 'target ' + Math.round(t*1000)/10 + '%';
 }
 
 function resetReport(keepDate){
-  const date = keepDate || iso(new Date());
   $('#reportForm').reset();
-  $('#r_date').value = date;
-  $('#c_float').value = CONFIG.DEFAULT_FLOAT.toFixed(2);
-  $('#payouts').innerHTML = ''; addPayoutRow();
-  fillSelects();
-  sig.clear();
-  fillStaffFromSchedule();
+  $('#r_date').value = keepDate || iso(new Date());
+  floatPad.reset(); cashPad.reset(); $('#c_counted').value = ''; $('#f_counted').value = '';
+  fillSelects(); sig.clear(); fillStaffFromSchedule(); calc();
 }
 
 /* signature pad */
 const sig = (() => {
   const c = $('#sig'), wrap = $('#sigWrap'); let ctx, drawing = false, dirty = false, last = null;
   function size(){
-    const r = wrap.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
-    const data = dirty ? c.toDataURL() : null;
+    const r = wrap.getBoundingClientRect(); if(!r.width) return;
+    const dpr = window.devicePixelRatio || 1, data = dirty ? c.toDataURL() : null;
     c.width = r.width*dpr; c.height = r.height*dpr;
     ctx = c.getContext('2d'); ctx.scale(dpr,dpr);
-    ctx.lineWidth = 2.2; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#2b1d14';
+    ctx.lineWidth = 2.2; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#1a1a1a';
     if(data){ const img = new Image(); img.onload = () => ctx.drawImage(img,0,0,r.width,r.height); img.src = data; }
   }
   const pos = e => { const r = c.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; };
-  c.addEventListener('pointerdown', e => { drawing = true; last = pos(e); c.setPointerCapture(e.pointerId); wrap.querySelector('.hint').style.opacity = 0; });
-  c.addEventListener('pointermove', e => { if(!drawing) return; const p = pos(e);
-    ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke(); last = p; dirty = true; });
+  c.addEventListener('pointerdown', e => { if(!ctx) size(); drawing = true; last = pos(e); c.setPointerCapture(e.pointerId); wrap.querySelector('.hint').style.opacity = 0; });
+  c.addEventListener('pointermove', e => { if(!drawing) return; const p = pos(e); ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke(); last = p; dirty = true; });
   ['pointerup','pointercancel','pointerleave'].forEach(ev => c.addEventListener(ev, () => drawing = false));
   window.addEventListener('resize', size);
-  setTimeout(size, 0);
   return {
-    clear(){ if(!ctx) size(); ctx.clearRect(0,0,c.width,c.height); dirty = false; wrap.querySelector('.hint').style.opacity = 1; },
-    isEmpty: () => !dirty,
-    data: () => c.toDataURL('image/png'),
-    resize: size,
+    clear(){ size(); if(ctx) ctx.clearRect(0,0,c.width,c.height); dirty = false; wrap.querySelector('.hint').style.opacity = 1; },
+    isEmpty: () => !dirty, data: () => c.toDataURL('image/png'), resize: size,
   };
 })();
 
@@ -758,43 +952,39 @@ async function submitReport(e){
   e.preventDefault();
   const r = readReport();
   if(!r.date) return toast('Pick a date', true);
-  if(!r.gross) return toast('Enter at least one sales figure', true);
-  if($('#c_counted').value === '') return toast('Enter the cash counted', true);
-  if(!r.signedBy) return toast('Choose who is signing', true);
+  if(!r.cash && !r.visa) return toast('Enter the cash and visa from the POS Z report', true);
+  if($('#z_machine').value === '') return toast('Enter the card machine total', true);
+  if($('#f_counted').value === '') return toast('Count the float first', true);
   if(sig.isEmpty()) return toast('Please sign before submitting', true);
   r.signature = sig.data();
-  r.submittedAt = new Date().toISOString();
+  if(r.cashCounted === '') delete r.overShort;
   const btn = $('#submitReport'); btn.disabled = true; btn.textContent = 'Sending…';
   try{
-    const res = await api.saveReport(r);
-    toast(res.demo ? 'Saved (demo — connect Sheets in Settings)' : 'Report saved to Google Sheets ✓');
-    // refresh week data so Labor tab updates
-    if(mondayOf(parseISO(r.date)).getTime() === parseISO(state.week).getTime()){
-      state.reports = state.reports.filter(x => !(x.date===r.date && x.shift===r.shift)).concat([r]);
-    }
-    resetReport(r.date); renderLabor();
+    const res = await call('saveReport', r);
+    const emailed = res.emailed === 'yes' ? ' · emailed' : res.emailed === 'demo' ? ' (demo)' : res.emailed && res.emailed !== 'no' ? ' · email failed' : '';
+    toast('Report saved' + emailed + ' ✓');
+    $('#savedText').textContent = `✓ ${r.shift} · ${parseISO(r.date).toLocaleDateString('en-GB',{day:'numeric',month:'short'})} saved${emailed} — true cash ${eur(r.trueCash)}`;
+    $('#savedPdf').hidden = !res.pdf; if(res.pdf) $('#savedPdf').href = res.pdf;
+    $('#savedBanner').hidden = false;
+    if(session.role === 'manager') await loadWeek();
+    resetReport(r.date); window.scrollTo({top:0, behavior:'smooth'});
   }catch(err){ toast('Not saved: ' + err.message, true); }
-  btn.disabled = false; btn.textContent = 'Sign & submit report';
+  btn.disabled = false; btn.textContent = 'Sign & submit';
 }
 
 /* =========================================================
    SCHEDULE
    ========================================================= */
-function weekDates(){ const m = parseISO(state.week); return DAYS.map((_,i) => iso(addDays(m,i))); }
-function weekLabel(){
-  const m = parseISO(state.week), s = addDays(m,6);
-  const f = d => d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
-  return `${f(m)} – ${f(s)} ${s.getFullYear()}`;
-}
+const weekDates = () => { const m = parseISO(state.week); return DAYS.map((_,i) => iso(addDays(m,i))); };
+function weekLabel(){ const m = parseISO(state.week), s = addDays(m,6), f = d => d.toLocaleDateString('en-GB',{day:'numeric',month:'short'}); return `${f(m)} – ${f(s)}`; }
 
 function renderSchedule(){
   $('#weekLabel').textContent = weekLabel();
+  if(session.role !== 'manager') return renderDayCards();
   const dates = weekDates(), todayIso = iso(new Date());
-  const people = activeStaff();
-  let html = '<thead><tr><th class="name">Staff</th>' + dates.map((d,i) =>
-    `<th class="${d===todayIso?'today':''}">${DAYS[i]}<br><span style="font-family:var(--mono);font-weight:500">${parseISO(d).getDate()}</span></th>`).join('') + '<th>Week</th></tr></thead><tbody>';
+  let html = '<thead><tr><th class="name">Staff</th>' + dates.map((d,i) => `<th class="${d===todayIso?'today':''}">${DAYS[i]}<br><span style="font-family:var(--font-num)">${parseISO(d).getDate()}</span></th>`).join('') + '<th>Week</th></tr></thead><tbody>';
   const dayH = Array(7).fill(0), dayC = Array(7).fill(0);
-  people.forEach(p => {
+  activeStaff().forEach(p => {
     let wh = 0, wc = 0;
     html += `<tr><td class="name"><b>${esc(p.name)}</b><small>${esc(p.role)} · ${eur(num(p.wage))}/h</small></td>`;
     dates.forEach((d,i) => {
@@ -805,13 +995,23 @@ function renderSchedule(){
     });
     html += `<td class="tot">${wh.toFixed(1)}h<br>${eur(wc,0)}</td></tr>`;
   });
-  html += '</tbody><tfoot><tr><td class="name" style="background:#fbf6ec">Day total</td>' +
-    dayH.map((h,i) => `<td>${h.toFixed(1)}h<br>${eur(dayC[i],0)}</td>`).join('') +
+  html += '</tbody><tfoot><tr><td class="name" style="background:var(--bg)">Day total</td>' + dayH.map((h,i) => `<td>${h.toFixed(1)}h<br>${eur(dayC[i],0)}</td>`).join('') +
     `<td>${dayH.reduce((a,b)=>a+b,0).toFixed(1)}h<br>${eur(dayC.reduce((a,b)=>a+b,0),0)}</td></tr></tfoot>`;
   $('#schedTable').innerHTML = html;
   $$('#schedTable .cell').forEach(b => b.onclick = () => openShift(b.dataset.d, b.dataset.n));
 }
-
+function renderDayCards(){
+  const dates = weekDates(), todayIso = iso(new Date()), me = session.name.toLowerCase();
+  const roleOf = n => (state.staff.find(s => s.name === n) || {}).role || '';
+  const mine = state.shifts.filter(s => s.name.toLowerCase() === me);
+  $('#meSum').textContent = `Your week: ${mine.length} shift${mine.length===1?'':'s'} · ${mine.reduce((a,s)=>a+hoursOf(s.start,s.end,s.brk),0).toFixed(1)} h`;
+  $('#dayCards').innerHTML = dates.map((d,i) => {
+    const list = state.shifts.filter(s => s.date === d).sort((a,b) => a.start.localeCompare(b.start)), dt = parseISO(d);
+    return `<div class="daycard ${d===todayIso?'today':''}"><header><b>${DAYS[i]} ${dt.getDate()}</b><span>${d===todayIso?'Today':dt.toLocaleDateString('en-GB',{month:'short'})}</span></header>` +
+      (list.length ? list.map(s => `<div class="who ${s.name.toLowerCase()===me?'me':''}"><b>${esc(s.name)}</b><span class="t">${s.start}–${s.end}</span>
+        <small>${esc(roleOf(s.name))}</small><small class="r">${s.brk?s.brk+' min break':'no break'}</small></div>`).join('') : '<div class="empty">No shifts</div>') + '</div>';
+  }).join('');
+}
 let editing = null;
 function openShift(date, name){
   editing = {date, name};
@@ -820,14 +1020,10 @@ function openShift(date, name){
   $('#sm_sub').textContent = parseISO(date).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
   $('#sm_start').value = s.start; $('#sm_end').value = s.end; $('#sm_break').value = s.brk;
   $('#sm_presets').innerHTML = CONFIG.SHIFT_PRESETS.map((p,i) => `<button data-p="${i}">${p.label}</button>`).join('');
-  $$('#sm_presets button').forEach(b => b.onclick = () => { const p = CONFIG.SHIFT_PRESETS[b.dataset.p];
-    $('#sm_start').value = p.start; $('#sm_end').value = p.end; $('#sm_break').value = p.brk; shiftCalc(); });
+  $$('#sm_presets button').forEach(b => b.onclick = () => { const p = CONFIG.SHIFT_PRESETS[b.dataset.p]; $('#sm_start').value = p.start; $('#sm_end').value = p.end; $('#sm_break').value = p.brk; shiftCalc(); });
   shiftCalc(); $('#shiftModal').classList.add('on');
 }
-function shiftCalc(){
-  const h = hoursOf($('#sm_start').value, $('#sm_end').value, $('#sm_break').value);
-  $('#sm_calc').textContent = h ? `${h.toFixed(2)} paid hours · ${eur(costOf(h, wageOf(editing.name)))}` : 'Pick a start and end time';
-}
+function shiftCalc(){ const h = hoursOf($('#sm_start').value, $('#sm_end').value, $('#sm_break').value); $('#sm_calc').textContent = h ? `${h.toFixed(2)} paid hours · ${eur(costOf(h, wageOf(editing.name)))}` : 'Pick a start and end time'; }
 ['#sm_start','#sm_end','#sm_break'].forEach(s => $(s).addEventListener('input', shiftCalc));
 const closeShift = () => $('#shiftModal').classList.remove('on');
 $('#sm_cancel').onclick = closeShift;
@@ -839,156 +1035,153 @@ $('#sm_ok').onclick = () => {
   state.draftShifts.push({ date: editing.date, name: editing.name, start, end, brk: num($('#sm_break').value) });
   closeShift(); renderSchedule();
 };
-
 $('#copyPrev').onclick = async () => {
-  const prev = iso(addDays(parseISO(state.week), -7));
-  try{
-    const d = await api.load(prev);
-    state.draftShifts = (d.shifts||[]).map(s => ({...s, date: iso(addDays(parseISO(s.date), 7))}));
-    renderSchedule(); toast('Copied last week — press Save to keep it');
+  try{ const d = await call('load', { week: iso(addDays(parseISO(state.week), -7)) });
+    state.draftShifts = (d.shifts||[]).map(s => ({...s, date: iso(addDays(parseISO(s.date), 7))})); renderSchedule(); toast('Copied last week. Press Save to keep it.');
   }catch(e){ toast(e.message, true); }
 };
 $('#saveSchedule').onclick = async () => {
-  const shifts = state.draftShifts.map(s => { const h = hoursOf(s.start,s.end,s.brk), w = wageOf(s.name);
-    return {...s, hours:+h.toFixed(2), wage:w, cost:+costOf(h,w).toFixed(2)}; });
-  try{ const r = await api.saveSchedule(state.week, shifts);
-    state.shifts = shifts.map(s => ({...s}));
-    toast(r.demo ? 'Schedule saved (demo)' : 'Schedule saved to Google Sheets ✓'); renderLabor(); fillStaffFromSchedule();
+  try{ await call('saveSchedule', { weekStart: state.week, shifts: state.draftShifts });
+    state.shifts = state.draftShifts.map(s => ({...s})); toast('Schedule saved ✓'); renderLabor(); fillStaffFromSchedule();
   }catch(e){ toast('Not saved: ' + e.message, true); }
 };
 
 /* =========================================================
-   LABOR
+   SALES & LABOR (manager)
    ========================================================= */
 function renderLabor(){
+  if(session.role !== 'manager') return;
   $('#weekLabel2').textContent = weekLabel();
-  const dates = weekDates(), t = num(settings.target)/100;
-  const rows = dates.map((d,i) => {
+  const t = num(state.cfg.targetPct ?? CONFIG.TARGET_LABOR_PCT)/100;
+  const rows = weekDates().map((d,i) => {
     const reps = state.reports.filter(r => r.date === d);
-    const net = reps.reduce((a,r)=>a+num(r.net),0);
+    const total = reps.reduce((a,r)=>a+num(r.total),0), trueCash = reps.reduce((a,r)=>a+num(r.trueCash),0), cardDiff = reps.reduce((a,r)=>a+num(r.cardDiff),0);
     const sched = state.shifts.filter(s => s.date===d);
-    const schedH = sched.reduce((a,s)=>a+hoursOf(s.start,s.end,s.brk),0);
-    const schedC = sched.reduce((a,s)=>a+costOf(hoursOf(s.start,s.end,s.brk), wageOf(s.name)),0);
+    const schedH = sched.reduce((a,s)=>a+hoursOf(s.start,s.end,s.brk),0), schedC = sched.reduce((a,s)=>a+costOf(hoursOf(s.start,s.end,s.brk), wageOf(s.name)),0);
     const act = reps.flatMap(r => r.staff || []);
-    const actH = act.reduce((a,s)=>a+hoursOf(s.start,s.end,s.brk),0);
-    const actC = act.reduce((a,s)=>a+costOf(hoursOf(s.start,s.end,s.brk), wageOf(s.name)),0);
-    const useActual = act.length > 0;
-    const hours = useActual ? actH : schedH, cost = useActual ? actC : schedC;
-    return { d, day: DAYS[i], net, schedH, schedC, actH, actC, hours, cost, useActual, pct: net ? cost/net : null, hasReport: reps.length>0 };
+    const actH = act.reduce((a,s)=>a+hoursOf(s.start,s.end,s.brk),0), actC = act.reduce((a,s)=>a+costOf(hoursOf(s.start,s.end,s.brk), wageOf(s.name)),0);
+    const useActual = act.length > 0, cost = useActual ? actC : schedC, hours = useActual ? actH : schedH;
+    return { d, day:DAYS[i], total, trueCash, cardDiff, hours, cost, useActual, has: reps.length>0, pct: total ? cost/total : null, pdfs: reps.map(r=>r.pdf).filter(Boolean) };
   });
-  const tot = rows.reduce((a,r) => ({ net:a.net+r.net, cost:a.cost+(r.hasReport?r.cost:0), hours:a.hours+(r.hasReport?r.hours:0), schedC:a.schedC+r.schedC, days:a.days+(r.hasReport?1:0) }), {net:0,cost:0,hours:0,schedC:0,days:0});
-  const p = tot.net ? tot.cost/tot.net : null;
-  $('#t_net').textContent = eur(tot.net,0); $('#t_netd').textContent = `${tot.days} of 7 days reported`;
-  $('#t_cost').textContent = eur(tot.cost,0); $('#t_costd').textContent = `scheduled for full week: ${eur(tot.schedC,0)}`;
-  $('#t_pct').textContent = p==null ? '—' : pct(p); $('#t_pct').className = 'v ' + (p==null?'':p>t?'neg':'pos');
-  $('#t_pctd').textContent = `target ${num(settings.target)}%`;
-  $('#t_splh').textContent = tot.hours ? eur(tot.net/tot.hours) : '—';
-
+  const rep = rows.filter(r => r.has);
+  const sum = k => rep.reduce((a,r)=>a+r[k],0);
+  const tot = { total: sum('total'), trueCash: sum('trueCash'), cardDiff: sum('cardDiff'), cost: sum('cost'), hours: sum('hours') };
+  const p = tot.total ? tot.cost/tot.total : null;
+  $('#t_total').textContent = eur(tot.total,0); $('#t_totald').textContent = `${rep.length} of 7 days reported`;
+  $('#t_true').textContent = eur(tot.trueCash,0); $('#t_diffd').textContent = `card difference ${eur(tot.cardDiff)}`;
+  $('#t_cost').textContent = eur(tot.cost,0); $('#t_costd').textContent = `${tot.hours.toFixed(1)} h on reported days`;
+  $('#t_pct').textContent = p==null ? '—' : pct(p); $('#t_pct').className = 'v ' + (p==null?'':p>t?'neg':'pos'); $('#t_pctd').textContent = `target ${Math.round(t*1000)/10}%`;
   const maxP = Math.max(0.5, t*1.4, ...rows.map(r => r.pct||0));
-  $('#bars').innerHTML = rows.map(r => `<div class="bar">
-      <span class="pct ${r.pct!=null && r.pct>t ? 'neg':''}">${r.pct==null?'—':Math.round(r.pct*100)+'%'}</span>
-      <div class="col ${r.pct==null?'none':r.pct>t?'over':''}" style="height:${r.pct==null?3:Math.max(3,r.pct/maxP*130)}px" title="${r.d}"></div>
-      <span class="day">${r.day}</span></div>`).join('') +
-    `<div class="target-line" style="bottom:${t/maxP*130 + 22}px"><span>target ${num(settings.target)}%</span></div>`;
-
-  $('#laborTable').innerHTML = `<thead><tr><th>Day</th><th>Net sales</th><th>Sched. hrs</th><th>Actual hrs</th><th>Labor cost</th><th>Labor %</th><th>Source</th></tr></thead><tbody>` +
-    rows.map(r => `<tr><td>${r.day} ${parseISO(r.d).getDate()}</td><td>${r.hasReport?eur(r.net):'—'}</td><td>${r.schedH.toFixed(1)}</td><td>${r.useActual?r.actH.toFixed(1):'—'}</td><td>${eur(r.cost)}</td>
+  $('#bars').innerHTML = rows.map(r => `<div class="bar"><span class="pct ${r.pct!=null && r.pct>t ? 'neg':''}">${r.pct==null?'—':Math.round(r.pct*100)+'%'}</span>
+      <div class="col ${r.pct==null?'none':r.pct>t?'over':''}" style="height:${r.pct==null?3:Math.max(3,r.pct/maxP*130)}px"></div><span class="day">${r.day}</span></div>`).join('') +
+    `<div class="target-line" style="bottom:${t/maxP*130 + 22}px"><span>target ${Math.round(t*1000)/10}%</span></div>`;
+  const sc = v => Math.abs(v)<0.005 ? '' : v>0 ? 'pos' : 'neg';
+  $('#laborTable').innerHTML = `<thead><tr><th>Day</th><th>Total</th><th>Card diff</th><th>True cash</th><th>Hours</th><th>Labor cost</th><th>Labor %</th><th>PDF</th></tr></thead><tbody>` +
+    rows.map(r => `<tr><td>${r.day} ${parseISO(r.d).getDate()}</td><td>${r.has?eur(r.total):'—'}</td><td class="${r.has?sc(r.cardDiff):''}">${r.has?eur(r.cardDiff):'—'}</td><td>${r.has?eur(r.trueCash):'—'}</td>
+      <td>${r.hours.toFixed(1)}${r.useActual?'':' <span class="tag warn">sched</span>'}</td><td>${eur(r.cost)}</td>
       <td class="${r.pct!=null && r.pct>t?'neg':r.pct!=null?'pos':''}">${r.pct==null?'—':pct(r.pct)}</td>
-      <td style="font-family:var(--sans)">${r.useActual?'<span class="tag ok">Actual</span>':'<span class="tag warn">Schedule</span>'}</td></tr>`).join('') +
-    `</tbody><tfoot><tr><td>Reported days</td><td>${eur(tot.net)}</td><td></td><td>${tot.hours.toFixed(1)}</td><td>${eur(tot.cost)}</td><td>${p==null?'—':pct(p)}</td><td></td></tr></tfoot>`;
+      <td>${r.pdfs.length ? r.pdfs.map(u => `<a class="pdf" href="${esc(u)}" target="_blank" rel="noopener">PDF</a>`).join(' ') : '—'}</td></tr>`).join('') +
+    `</tbody><tfoot><tr><td>Week</td><td>${eur(tot.total)}</td><td class="${sc(tot.cardDiff)}">${eur(tot.cardDiff)}</td><td>${eur(tot.trueCash)}</td><td>${tot.hours.toFixed(1)}</td><td>${eur(tot.cost)}</td><td>${p==null?'—':pct(p)}</td><td></td></tr></tfoot>`;
 }
 
 /* =========================================================
-   STAFF
+   TEAM (manager)
    ========================================================= */
-let staffDraft = [];
-function renderStaff(){
+let acctDraft = [], staffDraft = [];
+const ROLE_OPTS = ['employee','supervisor','manager','disabled'];
+function renderTeam(){
+  if(session.role !== 'manager') return;
+  acctDraft = state.users.map(u => ({...u}));
   staffDraft = state.staff.map(s => ({...s}));
-  drawStaff();
+  drawAccts(); drawStaff();
 }
+function drawAccts(){
+  const pend = acctDraft.filter(u => u.role === 'pending' && !u.remove);
+  $('#pendBadge').hidden = !pend.length; $('#pendBadge').textContent = pend.length;
+  $('#pendingList').innerHTML = pend.length ? '<p class="muted" style="margin:0 0 8px"><b>Waiting for approval</b></p>' + pend.map(u => `<div class="pend" data-n="${esc(u.name)}">
+      <b>${esc(u.name)}</b><span class="muted">signed up ${esc(u.created)}</span>
+      <div class="btnrow"><button class="btn sm" data-r="employee">Employee</button><button class="btn sm" data-r="supervisor">Supervisor</button><button class="btn sm ghost" data-r="reject">Reject</button></div></div>`).join('') : '';
+  $$('#pendingList .pend').forEach(row => row.querySelectorAll('button').forEach(b => b.onclick = () => {
+    const u = acctDraft.find(x => x.name === row.dataset.n);
+    if(b.dataset.r === 'reject') u.remove = true; else u.role = b.dataset.r;
+    u.dirty = true; drawAccts(); toast('Press “Save accounts” to confirm');
+  }));
+  const rest = acctDraft.filter(u => u.role !== 'pending' && !u.remove);
+  $('#acctList').innerHTML = rest.map(u => `<div class="acct" data-n="${esc(u.name)}">
+      <div class="nm"><b>${esc(u.name)}${u.name===session.name?' (you)':''}</b><small>${u.approvedBy ? 'approved by ' + esc(u.approvedBy) : ''}</small></div>
+      <select data-k="role">${ROLE_OPTS.map(r => `<option ${r===u.role?'selected':''} value="${r}">${(r==='employee'?'Barista':r[0].toUpperCase()+r.slice(1))}</option>`).join('')}</select>
+      <input type="password" inputmode="numeric" maxlength="8" placeholder="New PIN" data-k="newPin" class="pin" style="letter-spacing:.2em;font-size:15px!important">
+      <button class="x" aria-label="Remove account" ${u.name===session.name?'disabled':''}>✕</button></div>`).join('');
+  $$('#acctList .acct').forEach(row => {
+    const u = acctDraft.find(x => x.name === row.dataset.n);
+    row.querySelector('[data-k=role]').onchange = e => { u.role = e.target.value; u.dirty = true; };
+    row.querySelector('[data-k=newPin]').oninput = e => { u.newPin = e.target.value.trim(); u.dirty = true; };
+    row.querySelector('.x').onclick = () => { if(u.name===session.name) return; u.remove = true; u.dirty = true; drawAccts(); };
+  });
+}
+$('#saveAccts').onclick = async () => {
+  const changes = acctDraft.filter(u => u.dirty).map(({name, role, newPin, remove}) => ({name, role, newPin: newPin || undefined, remove: !!remove}));
+  if(changes.some(c => c.newPin && !/^\d{4,8}$/.test(c.newPin))) return toast('New PINs must be 4–8 digits', true);
+  if(!changes.length) return toast('No changes');
+  try{ await call('saveUsers', changes); toast('Accounts saved ✓'); await loadWeek(); }catch(e){ toast('Not saved: ' + e.message, true); }
+};
 function drawStaff(){
   $('#staffList').innerHTML = staffDraft.map((s,i) => `<div class="staff-row" data-i="${i}">
     <input type="text" value="${esc(s.name)}" placeholder="Name" data-k="name">
     <input type="text" value="${esc(s.role)}" placeholder="Role" data-k="role">
     <div class="money"><input type="number" step="0.05" min="0" value="${esc(s.wage)}" data-k="wage"></div>
-    <label class="switch"><input type="checkbox" ${s.active!==false?'checked':''} data-k="active"> Active</label>
+    <label class="switch"><input type="checkbox" ${s.active!==false?'checked':''} data-k="active"> Yes</label>
     <button class="x" aria-label="Remove">✕</button></div>`).join('');
   $$('#staffList .staff-row').forEach(row => {
     const i = +row.dataset.i;
-    row.querySelectorAll('[data-k]').forEach(inp => inp.addEventListener('input', () => {
-      const k = inp.dataset.k; staffDraft[i][k] = k==='active' ? inp.checked : k==='wage' ? num(inp.value) : inp.value; }));
+    row.querySelectorAll('[data-k]').forEach(inp => inp.addEventListener('input', () => { const k = inp.dataset.k; staffDraft[i][k] = k==='active' ? inp.checked : k==='wage' ? num(inp.value) : inp.value; }));
     row.querySelector('.x').onclick = () => { staffDraft.splice(i,1); drawStaff(); };
   });
 }
 $('#addStaff').onclick = () => { staffDraft.push({id:uid(), name:'', role:'Barista', wage:9, active:true}); drawStaff(); };
 $('#saveStaff').onclick = async () => {
-  const clean = staffDraft.filter(s => s.name.trim()).map(s => ({...s, name:s.name.trim(), id: s.id || uid()}));
-  try{ const r = await api.saveStaff(clean); state.staff = clean; toast(r.demo ? 'Staff saved (demo)' : 'Staff saved to Google Sheets ✓'); renderAll(true); }
-  catch(e){ toast('Not saved: ' + e.message, true); }
+  const clean = staffDraft.filter(s => s.name.trim()).map(s => ({...s, name:s.name.trim()}));
+  try{ await call('saveStaff', clean); state.staff = clean; toast('Wages saved ✓'); renderAll(); }catch(e){ toast('Not saved: ' + e.message, true); }
 };
 
 /* =========================================================
-   SETTINGS + NAV
+   NAV + BOOT
    ========================================================= */
-function renderConn(){
-  const p = $('#connPill');
-  p.className = 'pill ' + (isLive() ? 'live' : 'demo');
-  p.textContent = isLive() ? 'Google Sheets' : 'Demo mode';
-}
-$('#openSettings').onclick = () => {
-  $('#set_url').value = settings.url; $('#set_pin').value = settings.pin;
-  $('#set_target').value = settings.target; $('#set_oncost').value = settings.oncost;
-  $('#settingsModal').classList.add('on');
-};
-$('#set_cancel').onclick = () => $('#settingsModal').classList.remove('on');
-$('#set_demo').onclick = () => { $('#set_url').value = ''; $('#set_ok').click(); };
-$('#set_ok').onclick = () => {
-  settings.url = $('#set_url').value.trim(); settings.pin = $('#set_pin').value;
-  settings.target = num($('#set_target').value) || CONFIG.TARGET_LABOR_PCT; settings.oncost = num($('#set_oncost').value);
-  Object.entries(settings).forEach(([k,v]) => store.set(k,v));
-  $('#settingsModal').classList.remove('on'); renderConn(); loadWeek();
-};
-$$('.scrim').forEach(s => s.addEventListener('click', e => { if(e.target === s) s.classList.remove('on'); }));
-
 function show(view){
+  if(['labor','team'].includes(view) && session && session.role !== 'manager') view = 'report';
   $$('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.view === view));
   $$('.view').forEach(v => v.classList.toggle('on', v.id === 'view-'+view));
   if(view === 'report') setTimeout(sig.resize, 0);
-  store.set('view', view);
-  window.scrollTo({top:0});
+  store.set('view', view); window.scrollTo({top:0});
 }
 $$('#tabs button').forEach(b => b.onclick = () => show(b.dataset.view));
 $$('[data-week]').forEach(b => b.onclick = () => { state.week = iso(addDays(parseISO(state.week), 7*+b.dataset.week)); loadWeek(); });
-
-function renderAll(keepReport){
-  renderConn(); fillSelects();
+function renderAll(){
+  fillSelects();
   $$('#staffRows [data-sname]').forEach(s => { const v = s.value; s.innerHTML = staffOptions(v); });
-  renderSchedule(); renderLabor(); renderStaff();
-  if(!keepReport && !renderAll._done){ resetReport(); renderAll._done = true; } else calc();
+  renderSchedule(); renderLabor(); renderTeam(); calc();
 }
 
-/* report wiring */
 $$('[data-calc]').forEach(i => i.addEventListener('input', calc));
-$('#r_customers').addEventListener('input', calc);
-$('#addPayout').onclick = () => addPayoutRow();
 $('#addStaffRow').onclick = () => addStaffRow();
 $('#refillStaff').onclick = fillStaffFromSchedule;
 $('#clearSig').onclick = () => sig.clear();
-$('#resetReport').onclick = () => resetReport($('#r_date').value);
+$('#resetReport').onclick = () => { $('#savedBanner').hidden = true; resetReport($('#r_date').value); };
 $('#reportForm').addEventListener('submit', submitReport);
-$('#r_manager').addEventListener('change', () => { if(!$('#r_signedby').value) $('#r_signedby').value = $('#r_manager').value; });
 $('#r_date').addEventListener('change', async () => {
-  const wk = iso(mondayOf(parseISO($('#r_date').value)));
-  if(wk !== state.week){ state.week = wk; const d = $('#r_date').value; await loadWeek(); $('#r_date').value = d; }
+  const d = $('#r_date').value, wk = iso(mondayOf(parseISO(d)));
+  if(wk !== state.week){ state.week = wk; await loadWeek(); $('#r_date').value = d; }
   fillStaffFromSchedule();
 });
+$$('.scrim').forEach(s => s.addEventListener('click', e => { if(e.target === s) s.classList.remove('on'); }));
 
-/* boot */
-$('#cafeName').textContent = CONFIG.CAFE_NAME;
 document.title = CONFIG.CAFE_NAME + ' · Daily Report';
-buildDenoms();
-show(store.get('view','report'));
-loadWeek();
+renderLogo($('#authLogo')); renderLogo($('#headLogo'));
+$('#demoPick').hidden = isLive();
+const saved = store.get('session');
+if(saved && saved.name){ session = saved; $('#in_remember').checked = true;
+  call('login', null, saved).then(d => { session.role = d.user.role; store.set('session', session); enterApp(); })
+    .catch(e => logout(/PIN|approve|disabled/i.test(e.message) ? e.message : '')); }
 </script>
 </body>
 </html>
