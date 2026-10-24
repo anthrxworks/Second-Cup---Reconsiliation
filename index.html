@@ -254,7 +254,7 @@ a.pdf{font-family:var(--font-body);font-size:11px;font-weight:700;color:var(--br
 .seg{display:grid;grid-template-columns:1fr 1fr;background:var(--bg);border-radius:999px;padding:4px;margin:18px 0}
 .seg button{border:0;background:none;padding:9px;border-radius:999px;font-weight:700;cursor:pointer;color:var(--ink-2)}
 .seg button.on{background:var(--brand-ink);color:#fff}
-.pin{letter-spacing:.5em;font-family:var(--font-num);font-size:26px!important;text-align:center;min-height:58px!important}
+.pin{letter-spacing:.5em;font-family:var(--font-num);font-size:20px!important;text-align:center}
 .auth-msg{font-size:13px;border-radius:10px;padding:10px 12px;margin-top:12px}
 .auth-msg.err{background:var(--bad-soft);color:var(--bad)} .auth-msg.ok{background:var(--ok-soft);color:var(--ok)}
 .demo-pick{margin-top:16px;padding-top:14px;border-top:1px dashed var(--line)}
@@ -285,26 +285,37 @@ a.pdf{font-family:var(--font-body);font-size:11px;font-weight:700;color:var(--br
 <section id="auth">
   <div class="auth-card">
     <div class="logo" id="authLogo"></div>
-    <h3>Enter your PIN</h3>
+    <div class="seg"><button id="segIn" class="on">Sign in</button><button id="segUp">Sign up</button></div>
+
     <form id="formIn" autocomplete="off">
       <div class="grid">
-        <input type="password" id="in_pin" class="pin" inputmode="numeric" pattern="[0-9]*" maxlength="8" autocomplete="off" aria-label="PIN" placeholder="••••">
-        <label class="switch"><input type="checkbox" id="in_remember"> Keep me signed in on this device</label>
+        <label class="f">Username<input type="text" id="in_name" autocomplete="username" autocapitalize="off" placeholder="e.g. maria" required></label>
+        <label class="f">PIN<input type="password" id="in_pin" class="pin" inputmode="numeric" pattern="[0-9]*" maxlength="8" autocomplete="current-password" required></label>
+        <label class="switch"><input type="checkbox" id="in_remember"> Keep me signed in on this device <em class="muted">(only on your own phone)</em></label>
         <button class="btn primary" type="button" id="in_btn">Sign in</button>
       </div>
     </form>
 
+    <form id="formUp" autocomplete="off" hidden>
+      <div class="grid">
+        <label class="f">Choose a username<input type="text" id="up_name" autocapitalize="off" placeholder="e.g. maria" required></label>
+        <label class="f">Position<select id="up_role"><option value="employee">Barista</option><option value="supervisor">Supervisor</option></select></label>
+        <label class="f">Choose a PIN <em>4–8 digits, you’ll use it to sign in</em><input type="password" id="up_pin" class="pin" inputmode="numeric" pattern="[0-9]*" maxlength="8" required></label>
+        <label class="f">Repeat your PIN<input type="password" id="up_pin2" class="pin" inputmode="numeric" pattern="[0-9]*" maxlength="8" required></label>
+        <div class="card" style="background:var(--bg);box-shadow:none;padding:12px">
+          <label class="f">Master PIN <em>needed once, to create the account</em><input type="password" id="up_mpin" class="pin" inputmode="numeric" pattern="[0-9]*" maxlength="8"></label>
+        </div>
+        <button class="btn primary" type="button" id="up_btn">Create account</button>
+      </div>
+    </form>
+
     <div id="authMsg" class="auth-msg" hidden></div>
-    <details class="more" id="connBox" style="margin-top:14px;border-top:1px dashed var(--line);padding-top:6px">
-      <summary>Connection</summary>
-      <label class="f" style="margin-top:6px">Google Apps Script link <em>ends in /exec</em><input type="url" id="conn_url" placeholder="https://script.google.com/macros/s/…/exec"></label>
-      <div class="btnrow" style="margin-top:8px"><button type="button" class="btn sm" id="conn_test">Test</button><button type="button" class="btn sm primary" id="conn_save">Save link</button><button type="button" class="btn sm ghost" id="conn_reset">Reset</button></div>
-      <p class="muted" id="conn_msg" style="margin:8px 0 0;font-size:12px;word-break:break-all"></p>
-    </details>
-    <p class="muted" style="text-align:center;margin:14px 0 0;font-size:11px;letter-spacing:.1em">VERSION 6</p>
+    <p style="text-align:center;margin:14px 0 0"><button type="button" class="btn sm ghost" id="authConn">Connection settings</button></p>
+    <p class="muted" style="text-align:center;margin:14px 0 0;font-size:11px;letter-spacing:.1em">VERSION 8</p>
 
     <div class="demo-pick" id="demoPick" hidden>
-      <p class="muted" style="margin:0"><b>Demo mode</b>: not connected to Google Sheets. Use <b>1234</b> (manager) or <b>9999</b> (barista).</p>
+      <p class="muted" style="margin:0 0 8px"><b>Demo mode</b>: not connected to Google Sheets. Any username + PIN works. Master PIN for sign-up is <b>2604</b>. Sign in as:</p>
+      <select id="demoRole"><option value="employee">Barista</option><option value="supervisor">Supervisor</option></select>
     </div>
   </div>
 </section>
@@ -315,17 +326,19 @@ a.pdf{font-family:var(--font-body);font-size:11px;font-weight:700;color:var(--br
   <div class="wrap">
     <div class="logo" id="headLogo"></div>
     <div class="spacer"></div>
-    <div class="chip" style="padding:5px 6px"><span class="role" id="meRole"></span></div>
+    <div class="chip"><b id="meName"></b><span class="role" id="meRole"></span></div>
     <button class="hbtn" id="logout">Sign out</button>
   </div>
 </header>
 
+<div id="offline" class="wrap" hidden><div class="saved-banner" style="background:var(--bad-soft);border-color:#f0c4bf;color:var(--bad);margin:14px 0 0">
+  <span id="offlineText">Not connected to Google Sheets. Reports won’t be saved.</span><button class="btn sm" id="offlineBtn">Connection</button></div></div>
 <div class="wrap">
   <nav class="tabs" id="tabs">
     <button data-view="report" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>Report</button>
     <button data-view="schedule"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Schedule</button>
     <button data-view="labor" class="mgr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>Sales &amp; labor</button>
-    <button data-view="team" class="mgr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2M16 3.1a4 4 0 0 1 0 7.8M21 21v-2a4 4 0 0 0-3-3.9"/></svg>Wages</button>
+    <button data-view="team" class="mgr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2M16 3.1a4 4 0 0 1 0 7.8M21 21v-2a4 4 0 0 0-3-3.9"/></svg>Team<span id="pendBadge" class="tag bad" hidden></span></button>
   </nav>
 
   <!-- ================= DAILY REPORT ================= -->
@@ -391,7 +404,7 @@ a.pdf{font-family:var(--font-body);font-size:11px;font-weight:700;color:var(--br
         </div>
 
         <div class="card sup">
-          <h2>Staff on shift <span class="lock">Managers</span></h2>
+          <h2>Staff on shift <span class="lock">Supervisors</span></h2>
           <p class="muted" style="margin:-4px 0 12px">Filled in from the schedule. Correct to actual times.</p>
           <div class="head-cols"><span>Name</span><span>In</span><span>Out</span><span>Break (min)</span><span></span></div>
           <div id="staffRows"></div>
@@ -405,8 +418,7 @@ a.pdf{font-family:var(--font-body);font-size:11px;font-weight:700;color:var(--br
 
         <div class="card">
           <h2>Sign off</h2>
-          <label class="f" style="margin-bottom:10px">Your name<input type="text" id="r_signedby" list="staffNames" placeholder="Who is signing?" autocomplete="off"></label>
-          <datalist id="staffNames"></datalist>
+          <div class="signer"><span class="avatar" id="sigAvatar"></span><div><b id="sigName"></b><div class="muted">Signing as yourself</div></div></div>
           <div class="sig-wrap" id="sigWrap"><div class="base"></div><span class="hint">Sign here</span><canvas id="sig"></canvas></div>
           <div class="btnrow" style="margin-top:12px;justify-content:space-between">
             <button type="button" class="btn sm ghost" id="clearSig">Clear signature</button>
@@ -453,7 +465,7 @@ a.pdf{font-family:var(--font-body);font-size:11px;font-weight:700;color:var(--br
       <button class="btn sm primary mgr" id="saveSchedule">Save schedule</button>
     </div>
     <div class="mgr"><div class="sched-scroll"><table class="sched" id="schedTable"></table></div></div>
-    <div class="not-mgr"><div class="btnrow" style="margin-bottom:12px"><label class="f" style="flex-direction:row;align-items:center;gap:8px">I am <select id="meSel" style="width:auto;min-width:160px"></select></label><span class="me-sum" id="meSum" style="margin:0"></span></div><div class="daycards" id="dayCards"></div></div>
+    <div class="not-mgr"><span class="me-sum" id="meSum"></span><div class="daycards" id="dayCards"></div></div>
   </section>
 
   <!-- ================= SALES & LABOR ================= -->
@@ -477,8 +489,15 @@ a.pdf{font-family:var(--font-body);font-size:11px;font-weight:700;color:var(--br
 
   <!-- ================= TEAM ================= -->
   <section class="view mgr" id="view-team">
-    <h1 class="title">Wages</h1>
-    <p class="sub">Hourly wages used for labor cost. PINs are set at the top of Code.gs.</p>
+    <h1 class="title">Team</h1>
+    <p class="sub">Accounts, PIN resets and hourly wages.</p>
+    <div class="card" style="margin-bottom:14px">
+      <h2>Accounts</h2>
+      <div id="pendingList"></div>
+      <div id="acctList"></div>
+      <p class="muted" style="margin:10px 0 0"><b>Barista</b>: report + schedule · <b>Supervisor</b>: everything. New staff sign up on the sign-in screen with the master PIN.</p>
+      <div class="btnrow" style="justify-content:flex-end;margin-top:10px"><button class="btn sm primary" id="saveAccts">Save accounts</button></div>
+    </div>
     <div class="card">
       <h2>Wages</h2>
       <div class="head-cols" style="grid-template-columns:1.3fr 1fr 110px 90px 40px"><span>Name</span><span>Role</span><span>€ / hour</span><span>On schedule</span><span></span></div>
@@ -511,6 +530,19 @@ a.pdf{font-family:var(--font-body);font-size:11px;font-weight:700;color:var(--br
   </div>
 </div>
 
+<!-- Connection modal -->
+<div class="scrim" id="connModal">
+  <div class="modal">
+    <h3>Connection</h3>
+    <p class="sub">Link to your Google Apps Script. Saved on this device.</p>
+      <label class="f" style="margin-top:6px">Google Apps Script link <em>ends in /exec</em><input type="url" id="conn_url" placeholder="https://script.google.com/macros/s/…/exec"></label>
+      <div class="btnrow" style="margin-top:8px"><button type="button" class="btn sm" id="conn_test">Test</button><button type="button" class="btn sm primary" id="conn_save">Save link</button><button type="button" class="btn sm ghost" id="conn_reset">Reset</button></div>
+      <p class="muted" id="conn_msg" style="margin:8px 0 0;font-size:12px;word-break:break-all"></p>
+    
+    <div class="btnrow" style="justify-content:flex-end;margin-top:14px"><button class="btn" id="conn_close">Close</button></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -521,7 +553,7 @@ const CONFIG = {
   CAFE_NAME: 'Second Cup',
   TAGLINE: 'Coffee Co.',
   LOGO_URL: 'logo.png',     // upload the official logo to your GitHub repo with this name; falls back to the wordmark
-  API_URL: 'https://script.google.com/macros/s/AKfycbz2w7FVa0v1x-kS8uUEF-05thPR3Jv5dnbcFKtz4EtW2I7_asRjFpV5jYlt6bX7uBlX0g/exec',
+  API_URL: 'https://script.google.com/macros/s/AKfycbzXafxSndTtcfYnI-IUnSGIR31iNOF9DVXep9yxBNUoIBXpbXyrx2RPt9ESfSiSuYVdSw/exec',
   FLOAT_TARGET: 150,        // overwritten by the server's value once signed in
   TARGET_LABOR_PCT: 28,
   ONCOST_PCT: 0,
@@ -572,10 +604,10 @@ function renderLogo(el, dark){
   img.onload = () => { el.innerHTML = ''; el.appendChild(img); };
   img.src = CONFIG.LOGO_URL;
 }
-(function(){ try{ const u = localStorage.getItem('sc3_apiUrl'); if(u) CONFIG.API_URL = JSON.parse(u); }catch(e){} })();
+(function(){ try{ const u = localStorage.getItem('sc3_apiUrl8'); if(u) CONFIG.API_URL = JSON.parse(u); }catch(e){} })();
 const isLive = () => !!CONFIG.API_URL && !window.__DEMO__;
 const rank = r => ({employee:1, supervisor:2, manager:3}[r] || 0);
-const roleLabel = r => r === 'employee' ? 'barista' : r;
+const roleLabel = r => r === 'employee' ? 'barista' : r === 'manager' ? 'supervisor' : r;
 
 /* =========================================================
    DEMO DATA (used when not connected)
@@ -589,11 +621,10 @@ const demo = (() => {
     {id:'s5', name:'Sofia',   role:'Barista',    wage:8.50,  active:true},
   ];
   const users = [
-    {name:'Ivan', role:'manager', created:'2026-10-24', approvedBy:'(first account)'},
+    {name:'Ivan', role:'supervisor', created:'2026-10-24', approvedBy:''},
     {name:'Elena', role:'supervisor', created:'2026-10-24', approvedBy:'Ivan'},
     {name:'Maria', role:'employee', created:'2026-10-24', approvedBy:'Ivan'},
     {name:'Andreas', role:'employee', created:'2026-10-24', approvedBy:'Ivan'},
-    {name:'Giorgos P.', role:'pending', created:'2026-10-24', approvedBy:''},
   ];
   const pattern = {
     0:[['Elena','07:00','15:00',30],['Maria','07:00','15:00',30],['Andreas','15:00','23:00',30]],
@@ -621,27 +652,27 @@ const demo = (() => {
 /* =========================================================
    API
    ========================================================= */
-let session = null;   // {pin, role}
+let session = null;   // {name, pin, role}
 async function call(action, data, cred){
   const c = cred || session || {};
   if(!isLive()) return demoCall(action, data, c);
   // text/plain avoids a CORS pre-flight, which Apps Script can't answer
   const res = await fetch(CONFIG.API_URL, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
-    body: JSON.stringify({ action, pin: c.pin, data }) });
+    body: JSON.stringify({ action, name: c.name, pin: c.pin, data }) });
   const j = await res.json();
   if(!j.ok) throw new Error(j.error || 'Request failed');
   return j.data;
 }
 function demoCall(action, data, c){
-  const demoRoleOf = pin => pin === '1234' ? 'manager' : pin === '9999' ? 'employee' : null;
-  if(action === 'login'){ const r = demoRoleOf(c.pin); if(!r) throw new Error('Wrong PIN (demo: 1234 or 9999)'); return { user:{ name: r==='manager'?'Manager':'Barista', role:r } }; }
+  if(action === 'signup'){ if(String(c.masterPin||'').trim() !== '2604') throw new Error('Master PIN is not correct (demo: 2604)'); return { role:c.role, message:`(Demo) Account created as ${roleLabel(c.role)}. Sign in with your username and PIN.` }; }
+  if(action === 'login'){ const sup = $('#demoRole').value === 'supervisor'; return { user:{ name: c.name, role: sup ? 'manager' : 'employee', title: sup ? 'supervisor' : 'barista' } }; }
   const r = session ? session.role : 'employee';
   if(action === 'load'){
     const end = iso(addDays(parseISO(data.week),6)), inWeek = x => x.date >= data.week && x.date <= end;
     const config = { floatTarget: CONFIG.FLOAT_TARGET, targetPct: CONFIG.TARGET_LABOR_PCT, oncostPct: CONFIG.ONCOST_PCT };
-    if(r !== 'manager') return { user:{name:'Barista', role:r}, config, reports:[], shifts: demo.shifts.filter(inWeek),
+    if(r !== 'manager') return { user:{name:c.name, role:r}, config, reports:[], shifts: demo.shifts.filter(inWeek),
       staff: demo.staff.filter(s=>s.active!==false).map(s => ({name:s.name, role:s.role, active:true})) };
-    return { user:{name:'Manager', role:r}, config, staff: demo.staff, shifts: demo.shifts.filter(inWeek), reports: demo.reports.filter(inWeek) };
+    return { user:{name:c.name, role:r}, config, staff: demo.staff, shifts: demo.shifts.filter(inWeek), reports: demo.reports.filter(inWeek), users: demo.users };
   }
   if(action === 'saveReport'){ const total = r2(num(data.cash)+num(data.visa)), machine = r2(data.cardMachine);
     demo.reports = demo.reports.filter(x => !(x.date===data.date && x.shift===data.shift));
@@ -649,6 +680,7 @@ function demoCall(action, data, c){
     return { saved:true, pdf:'', emailed:'demo' }; }
   if(action === 'saveSchedule'){ const end = iso(addDays(parseISO(data.weekStart),6)); demo.shifts = demo.shifts.filter(s => s.date < data.weekStart || s.date > end).concat(data.shifts); return {saved:true}; }
   if(action === 'saveStaff'){ demo.staff = data; return {saved:true}; }
+  if(action === 'saveUsers'){ data.forEach(u => { const i = demo.users.findIndex(x=>x.name===u.name); if(i<0) return; if(u.remove) demo.users.splice(i,1); else demo.users[i].role = u.role; }); return {saved:true}; }
   throw new Error('Unknown action');
 }
 
@@ -656,39 +688,67 @@ function demoCall(action, data, c){
    AUTH
    ========================================================= */
 function authMsg(text, ok){ const m = $('#authMsg'); m.hidden = !text; m.textContent = text || ''; m.className = 'auth-msg ' + (ok?'ok':'err'); }
+function seg(up){ $('#segIn').classList.toggle('on', !up); $('#segUp').classList.toggle('on', up); $('#formIn').hidden = up; $('#formUp').hidden = !up; authMsg(''); }
+$('#segIn').onclick = () => seg(false);
+$('#segUp').onclick = () => seg(true);
+
 async function doSignIn(e){
   if(e) e.preventDefault();
-  const cred = { pin: $('#in_pin').value.trim() };
-  if(!/^\d{4,8}$/.test(cred.pin)) return authMsg('Enter your 4-digit PIN');
+  const cred = { name: $('#in_name').value.trim(), pin: $('#in_pin').value.trim() };
+  if(!/^\d{4,8}$/.test(cred.pin)) return authMsg('PIN must be 4–8 digits');
   const b = $('#in_btn'); b.disabled = true; b.textContent = 'Signing in…';
   try{
     const d = await call('login', null, cred);
-    session = { pin: cred.pin, role: d.user.role };
+    session = { ...cred, name: d.user.name, role: d.user.role, title: d.user.title || roleLabel(d.user.role) };
     if($('#in_remember').checked) store.set('session', session); else store.del('session');
     $('#in_pin').value = ''; authMsg('');
     enterApp();
-  }catch(err){ authMsg(err.message); $('#in_pin').select(); }
+  }catch(err){ authMsg(err.message); }
   b.disabled = false; b.textContent = 'Sign in';
 }
+
+async function doSignUp(e){
+  if(e) e.preventDefault();
+  const name = $('#up_name').value.trim(), pin = $('#up_pin').value.trim(), masterPin = $('#up_mpin').value.trim(), role = $('#up_role').value;
+  if(name.length < 2) return authMsg('Choose a username');
+  if(!masterPin) return authMsg('Enter the master PIN to create an account');
+  if(!/^\d{4,8}$/.test(pin)) return authMsg('PIN must be 4–8 digits');
+  if(pin !== $('#up_pin2').value.trim()) return authMsg('PINs don’t match');
+  const b = $('#up_btn'); b.disabled = true; b.textContent = 'Creating…';
+  try{
+    let d;
+    if(isLive()){
+      const res = await fetch(CONFIG.API_URL, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify({action:'signup', name, pin, role, masterPin})});
+      const j = await res.json(); if(!j.ok) throw new Error(j.error); d = j.data;
+    } else d = demoCall('signup', null, {name, pin, role, masterPin});
+    seg(false); $('#in_name').value = name; authMsg(d.message, true);
+    ['#up_name','#up_pin','#up_pin2','#up_mpin'].forEach(s => $(s).value = '');
+  }catch(err){ authMsg(err.message); }
+  b.disabled = false; b.textContent = 'Create account';
+}
+
 $('#in_btn').addEventListener('click', doSignIn);
-$('#formIn').addEventListener('submit', e => e.preventDefault());
-$('#in_pin').addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); doSignIn(); } });
 // ---- connection box ----
 $('#conn_url').value = CONFIG.API_URL || '';
 async function testConn(url){
   const m = $('#conn_msg'); m.style.color = ''; m.textContent = 'Testing…';
   try{
     const r = await fetch(url, {method:'GET'}); const t = await r.text(); let j; try{ j = JSON.parse(t); }catch(_){}
-    if(j && j.ok && j.data && j.data.version >= 6){ m.style.color = 'var(--ok)'; m.textContent = `✓ Connected. Google is running version ${j.data.version}. You can sign in.`; }
-    else if(j && j.ok && j.data && j.data.app){ m.style.color = 'var(--warn)'; m.textContent = `⚠ Connected, but Google is running an older version (${j.data.version || 'v3/v4'}). Paste the new Code.gs, then Deploy → Manage deployments → Edit → New version.`; }
+    if(j && j.ok && j.data && j.data.version >= 8){ m.style.color = 'var(--ok)'; m.textContent = `✓ Connected. Google is running version ${j.data.version}. You can sign in.`; }
+    else if(j && j.ok && j.data && j.data.app){ m.style.color = 'var(--warn)'; m.textContent = '⚠ Connected, but Google is running an older version (v3/v4). Paste the new Code.gs, then Deploy → Manage deployments → Edit → New version.'; }
     else if(j && j.error){ m.style.color = 'var(--bad)'; m.textContent = `✗ Google is running OLD code (says "${j.error}"). Deploy a new version, or make a New deployment and paste its link here.`; }
-    else { m.style.color = 'var(--bad)'; m.textContent = '✗ Got a page that isn’t the app. Open the link in a new tab to see what Google says.'; }
-  }catch(e){ m.style.color = 'var(--bad)'; m.textContent = '✗ Can’t reach that link (' + e.message + '). Open it in a new tab to see what Google says.'; }
+    else { m.style.color = 'var(--bad)'; m.textContent = '✗ Got a page that isn’t the app. Check access is set to “Anyone”.'; }
+  }catch(e){ m.style.color = 'var(--bad)'; m.textContent = '✗ Can’t reach that link (' + e.message + '). The deployment may be deleted or not set to “Anyone”.'; }
 }
 $('#conn_test').onclick = () => { const u = $('#conn_url').value.trim(); if(!u) return; testConn(u); };
 $('#conn_save').onclick = () => { const u = $('#conn_url').value.trim(); if(!/^https:\/\/script\.google\.com\/.+\/exec$/.test(u)) { $('#conn_msg').style.color='var(--bad)'; $('#conn_msg').textContent = 'That doesn’t look like an Apps Script link ending in /exec'; return; }
-  store.set('apiUrl', u); CONFIG.API_URL = u; $('#demoPick').hidden = true; testConn(u); };
-$('#conn_reset').onclick = () => { store.del('apiUrl'); location.reload(); };
+  store.set('apiUrl8', u); CONFIG.API_URL = u; $('#demoPick').hidden = true; testConn(u); if(session) loadWeek(); };
+$('#conn_reset').onclick = () => { store.del('apiUrl8'); location.reload(); };
+$('#up_btn').addEventListener('click', doSignUp);
+$('#formIn').addEventListener('submit', e => e.preventDefault());
+$('#formUp').addEventListener('submit', e => e.preventDefault());
+$$('#formIn input').forEach(i => i.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); doSignIn(); } }));
+$$('#formUp input').forEach(i => i.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); doSignUp(); } }));
 
 function logout(msg){
   session = null; store.del('session');
@@ -697,6 +757,10 @@ function logout(msg){
   if(msg) authMsg(msg, true);
 }
 $('#logout').onclick = () => logout();
+const openConn = () => { $('#conn_url').value = CONFIG.API_URL || ''; $('#conn_msg').textContent = ''; $('#connModal').classList.add('on'); };
+$('#authConn').onclick = openConn;
+$('#offlineBtn').onclick = openConn;
+$('#conn_close').onclick = () => $('#connModal').classList.remove('on');
 
 // idle sign-out for shared devices
 let idleT;
@@ -724,9 +788,11 @@ async function loadWeek(){
     state.cfg = d.config || {};
     state.staff = d.staff || []; state.shifts = d.shifts || []; state.reports = d.reports || []; state.users = d.users || [];
     state.draftShifts = state.shifts.map(s => ({...s}));
+    $('#offline').hidden = !!isLive() ? true : $('#offline').hidden;
   }catch(e){
-    if(/PIN/i.test(e.message)) return logout(e.message);
-    toast('Couldn’t reach Google Sheets: ' + e.message, true);
+    if(/PIN|disabled/i.test(e.message)) return logout(e.message);
+    $('#offline').hidden = false;
+    $('#offlineText').textContent = 'Not connected to Google Sheets (' + e.message + '). Reports won’t be saved until this is fixed.';
   }
   document.body.classList.remove('loading');
   renderAll();
@@ -735,8 +801,13 @@ async function loadWeek(){
 function applyRole(){
   document.body.classList.remove('r-employee','r-supervisor','r-manager');
   document.body.classList.add('r-' + session.role);
-  $('#meRole').textContent = (isLive() ? '' : 'Demo · ') + roleLabel(session.role);
+  $('#meName').textContent = session.name;
+  $('#meRole').textContent = (isLive() ? '' : 'Demo · ') + (session.title || roleLabel(session.role));
+  if(!isLive()){ $('#offline').hidden = false; $('#offline .saved-banner').style.cssText = 'background:var(--warn-soft);border-color:#ead9a6;color:var(--warn);margin:14px 0 0';
+    $('#offlineText').textContent = 'Demo mode: not connected to Google Sheets.'; }
   $('#meRole').className = 'role' + (isLive() ? '' : ' demo');
+  $('#sigName').textContent = session.name;
+  $('#sigAvatar').textContent = initials(session.name);
   const cur = store.get('view','report');
   show(['labor','team'].includes(cur) && session.role !== 'manager' ? 'report' : cur);
 }
@@ -804,8 +875,7 @@ const cashPad  = makeKeypad($('#cashCalc'),  'Use as cash counted ↑', v => { $
 const staffOptions = sel => '<option value="">— select —</option>' + activeStaff().map(s => `<option ${s.name===sel?'selected':''}>${esc(s.name)}</option>`).join('');
 function fillSelects(){
   const m = $('#r_manager').value;
-  $('#r_manager').innerHTML = staffOptions(m || (activeStaff().find(s=>/lead|super|manag/i.test(s.role))||{}).name);
-  $('#staffNames').innerHTML = activeStaff().map(s => `<option value="${esc(s.name)}">`).join('');
+  $('#r_manager').innerHTML = staffOptions(m || (rank(session.role)>=2 ? session.name : (activeStaff().find(s=>/lead|super|manag/i.test(s.role))||{}).name));
 }
 function addStaffRow(s={name:'',start:'',end:'',brk:0}){
   const el = document.createElement('div'); el.className = 'srow';
@@ -833,7 +903,7 @@ function readReport(){
   const cashDiff = r2(trueCash - cash);          // real cash vs POS cash
   const total = r2(trueCash + cardMachine);      // TOTAL = true cash + card machine
   const floatCount = $('#f_counted').value === '' ? 0 : r2($('#f_counted').value);
-  const sup = session.role === 'manager';
+  const sup = rank(session.role) >= 2;
   const staff = sup ? $$('#staffRows .srow').map(r => ({ name: r.querySelector('[data-sname]').value, start: r.querySelector('[data-sstart]').value,
     end: r.querySelector('[data-send]').value, brk: num(r.querySelector('[data-sbrk]').value) })).filter(s => s.name) : [];
   staff.forEach(s => { s.hours = r2(hoursOf(s.start,s.end,s.brk)); });
@@ -846,7 +916,7 @@ function readReport(){
     floatCounted: floatCount, floatDiff: r2(floatCount - floatTarget()),
     staff, laborHours, laborCost,
     cashCounted, overShort: hasCount ? r2(cashCounted - trueCash) : null,
-    notes: $('#r_notes').value.trim(), signedBy: $('#r_signedby').value.trim(),
+    notes: $('#r_notes').value.trim(),
   };
 }
 function diffTag(v, small=2){ return Math.abs(v) < 0.005 ? '<span class="tag ok">Balanced</span>' : Math.abs(v) <= small ? '<span class="tag warn">Small</span>' : `<span class="tag bad">${v>0?'Over':'Short'}</span>`; }
@@ -932,7 +1002,6 @@ async function submitReport(e){
   if(!r.cash && !r.visa) return toast('Enter the cash and visa from the POS Z report', true);
   if($('#z_machine').value === '') return toast('Enter the card machine total', true);
   if($('#f_counted').value === '') return toast('Count the float first', true);
-  if(!r.signedBy) return toast('Type your name in Sign off', true);
   if(sig.isEmpty()) return toast('Please sign before submitting', true);
   r.signature = sig.data();
   if(r.cashCounted === '') delete r.overShort;
@@ -979,12 +1048,10 @@ function renderSchedule(){
   $$('#schedTable .cell').forEach(b => b.onclick = () => openShift(b.dataset.d, b.dataset.n));
 }
 function renderDayCards(){
-  const dates = weekDates(), todayIso = iso(new Date()), me = String(store.get('me','')).toLowerCase();
-  const names = [...new Set(state.staff.map(s => s.name).concat(state.shifts.map(s => s.name)))].sort();
-  $('#meSel').innerHTML = '<option value="">— choose —</option>' + names.map(n => `<option ${n.toLowerCase()===me?'selected':''}>${esc(n)}</option>`).join('');
+  const dates = weekDates(), todayIso = iso(new Date()), me = session.name.toLowerCase();
   const roleOf = n => (state.staff.find(s => s.name === n) || {}).role || '';
   const mine = state.shifts.filter(s => s.name.toLowerCase() === me);
-  $('#meSum').textContent = me ? `Your week: ${mine.length} shift${mine.length===1?'':'s'} · ${mine.reduce((a,s)=>a+hoursOf(s.start,s.end,s.brk),0).toFixed(1)} h` : 'Pick your name to highlight your shifts';
+  $('#meSum').textContent = `Your week: ${mine.length} shift${mine.length===1?'':'s'} · ${mine.reduce((a,s)=>a+hoursOf(s.start,s.end,s.brk),0).toFixed(1)} h`;
   $('#dayCards').innerHTML = dates.map((d,i) => {
     const list = state.shifts.filter(s => s.date === d).sort((a,b) => a.start.localeCompare(b.start)), dt = parseISO(d);
     return `<div class="daycard ${d===todayIso?'today':''}"><header><b>${DAYS[i]} ${dt.getDate()}</b><span>${d===todayIso?'Today':dt.toLocaleDateString('en-GB',{month:'short'})}</span></header>` +
@@ -1067,12 +1134,44 @@ function renderLabor(){
 /* =========================================================
    TEAM (manager)
    ========================================================= */
-let staffDraft = [];
+let acctDraft = [], staffDraft = [];
+const ROLE_OPTS = ['employee','supervisor','disabled'];
 function renderTeam(){
   if(session.role !== 'manager') return;
+  acctDraft = state.users.map(u => ({...u}));
   staffDraft = state.staff.map(s => ({...s}));
-  drawStaff();
+  drawAccts(); drawStaff();
 }
+function drawAccts(){
+  const pend = acctDraft.filter(u => u.role === 'pending' && !u.remove);
+  $('#pendBadge').hidden = !pend.length; $('#pendBadge').textContent = pend.length;
+  $('#pendingList').innerHTML = pend.length ? '<p class="muted" style="margin:0 0 8px"><b>Waiting for approval</b></p>' + pend.map(u => `<div class="pend" data-n="${esc(u.name)}">
+      <b>${esc(u.name)}</b><span class="muted">signed up ${esc(u.created)}</span>
+      <div class="btnrow"><button class="btn sm" data-r="employee">Employee</button><button class="btn sm" data-r="supervisor">Supervisor</button><button class="btn sm ghost" data-r="reject">Reject</button></div></div>`).join('') : '';
+  $$('#pendingList .pend').forEach(row => row.querySelectorAll('button').forEach(b => b.onclick = () => {
+    const u = acctDraft.find(x => x.name === row.dataset.n);
+    if(b.dataset.r === 'reject') u.remove = true; else u.role = b.dataset.r;
+    u.dirty = true; drawAccts(); toast('Press “Save accounts” to confirm');
+  }));
+  const rest = acctDraft.filter(u => u.role !== 'pending' && !u.remove);
+  $('#acctList').innerHTML = rest.map(u => `<div class="acct" data-n="${esc(u.name)}">
+      <div class="nm"><b>${esc(u.name)}${u.name===session.name?' (you)':''}</b><small>${u.approvedBy ? 'approved by ' + esc(u.approvedBy) : ''}</small></div>
+      <select data-k="role">${ROLE_OPTS.map(r => `<option ${r===(u.role==='manager'?'supervisor':u.role)?'selected':''} value="${r}">${(r==='employee'?'Barista':r[0].toUpperCase()+r.slice(1))}</option>`).join('')}</select>
+      <input type="password" inputmode="numeric" maxlength="8" placeholder="New PIN" data-k="newPin" class="pin" style="letter-spacing:.2em;font-size:15px!important">
+      <button class="x" aria-label="Remove account" ${u.name===session.name?'disabled':''}>✕</button></div>`).join('');
+  $$('#acctList .acct').forEach(row => {
+    const u = acctDraft.find(x => x.name === row.dataset.n);
+    row.querySelector('[data-k=role]').onchange = e => { u.role = e.target.value; u.dirty = true; };
+    row.querySelector('[data-k=newPin]').oninput = e => { u.newPin = e.target.value.trim(); u.dirty = true; };
+    row.querySelector('.x').onclick = () => { if(u.name===session.name) return; u.remove = true; u.dirty = true; drawAccts(); };
+  });
+}
+$('#saveAccts').onclick = async () => {
+  const changes = acctDraft.filter(u => u.dirty).map(({name, role, newPin, remove}) => ({name, role, newPin: newPin || undefined, remove: !!remove}));
+  if(changes.some(c => c.newPin && !/^\d{4,8}$/.test(c.newPin))) return toast('New PINs must be 4–8 digits', true);
+  if(!changes.length) return toast('No changes');
+  try{ await call('saveUsers', changes); toast('Accounts saved ✓'); await loadWeek(); }catch(e){ toast('Not saved: ' + e.message, true); }
+};
 function drawStaff(){
   $('#staffList').innerHTML = staffDraft.map((s,i) => `<div class="staff-row" data-i="${i}">
     <input type="text" value="${esc(s.name)}" placeholder="Name" data-k="name">
@@ -1128,10 +1227,9 @@ document.title = CONFIG.CAFE_NAME + ' · Daily Report';
 renderLogo($('#authLogo')); renderLogo($('#headLogo'));
 $('#demoPick').hidden = isLive();
 const saved = store.get('session');
-if(saved && saved.pin){ session = saved; $('#in_remember').checked = true;
-  call('login', null, saved).then(d => { session.role = d.user.role; store.set('session', session); enterApp(); })
-    .catch(e => logout(/PIN/i.test(e.message) ? e.message : '')); }
-$('#meSel').addEventListener('change', e => { store.set('me', e.target.value); renderDayCards(); });
+if(saved && saved.name){ session = saved; $('#in_remember').checked = true;
+  call('login', null, saved).then(d => { session.role = d.user.role; session.title = d.user.title || roleLabel(d.user.role); store.set('session', session); enterApp(); })
+    .catch(e => logout(/PIN|disabled/i.test(e.message) ? e.message : '')); }
 </script>
 </body>
 </html>
