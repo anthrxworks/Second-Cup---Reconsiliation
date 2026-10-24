@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Second Cup · Daily Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   CONFIG LIVES IN THE <script> BELOW (search for CONFIG)
+   ========================================================= */
+:root{
+  --paper:#f6f1e7; --card:#fffdf8; --ink:#2b1d14; --ink-2:#6b5848; --line:#e4d9c6;
+  --crema:#c8742f; --crema-soft:#f3e2cf; --ok:#3f7d4e; --ok-soft:#e1efe3;
+  --bad:#b5412b; --bad-soft:#f6e0da; --warn:#a8790f; --warn-soft:#f5ecd2;
+  --radius:14px; --shadow:0 1px 0 rgba(43,29,20,.04),0 6px 20px -12px rgba(43,29,20,.25);
+  --mono:'IBM Plex Mono',ui-monospace,monospace; --sans:'IBM Plex Sans',system-ui,sans-serif; --serif:'Fraunces',Georgia,serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font:15px/1.45 var(--sans);-webkit-font-smoothing:antialiased;padding-bottom:84px}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px}
+
+/* Header */
+header.top{position:sticky;top:0;z-index:20;background:rgba(246,241,231,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:12px;height:60px}
+.brand{font-family:var(--serif);font-weight:700;font-size:21px;letter-spacing:-.01em;display:flex;align-items:center;gap:9px}
+.brand .cup{width:26px;height:26px;border-radius:50%;background:var(--ink);display:grid;place-items:center}
+.brand .cup:after{content:"";width:12px;height:12px;border-radius:50%;background:var(--crema)}
+.brand small{font-family:var(--sans);font-weight:500;font-size:12px;color:var(--ink-2);letter-spacing:.06em;text-transform:uppercase;margin-left:2px}
+.spacer{flex:1}
+.pill{font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.pill:before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.pill.demo{background:var(--warn-soft);color:var(--warn)}
+.pill.live{background:var(--ok-soft);color:var(--ok)}
+.iconbtn{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--card);display:grid;place-items:center;cursor:pointer}
+.iconbtn:hover{border-color:var(--ink-2)}
+
+/* Tabs: bottom on mobile, top on desktop */
+nav.tabs{position:fixed;bottom:0;left:0;right:0;z-index:30;background:var(--ink);display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+nav.tabs button{flex:1;background:none;border:0;color:#cdbfae;padding:8px 4px;border-radius:10px;font-size:12px;font-weight:500;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+nav.tabs button svg{width:20px;height:20px}
+nav.tabs button.on{background:#3d2b1f;color:#fff}
+@media(min-width:820px){
+  body{padding-bottom:40px}
+  nav.tabs{position:static;background:none;padding:0;gap:4px;justify-content:flex-start;margin:18px 0 6px}
+  nav.tabs button{flex:0 0 auto;flex-direction:row;color:var(--ink-2);font-size:14px;padding:9px 14px;gap:8px}
+  nav.tabs button svg{width:17px;height:17px}
+  nav.tabs button.on{background:var(--ink);color:#fff}
+}
+
+/* Layout */
+.view{display:none;padding-top:18px}
+.view.on{display:block}
+h1.title{font-family:var(--serif);font-weight:700;font-size:28px;letter-spacing:-.02em;margin:0 0 2px}
+.sub{color:var(--ink-2);margin:0 0 18px}
+.grid{display:grid;gap:14px}
+@media(min-width:820px){.report-grid{grid-template-columns:1fr 330px;align-items:start}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+.card h2{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-2);font-weight:600;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+.card h2 .n{font-family:var(--mono);background:var(--crema-soft);color:var(--crema);border-radius:6px;padding:1px 6px;font-size:11px}
+.row{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:500;color:var(--ink-2)}
+input[type=text],input[type=number],input[type=date],input[type=time],input[type=password],input[type=url],select,textarea{
+  width:100%;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 11px;color:var(--ink);outline:none;min-height:44px}
+input:focus,select:focus,textarea:focus{border-color:var(--crema);box-shadow:0 0 0 3px var(--crema-soft)}
+textarea{min-height:80px;resize:vertical}
+.money{position:relative}
+.money input{padding-left:26px;font-family:var(--mono);text-align:right}
+.money:before{content:"€";position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--ink-2);font-family:var(--mono);font-size:14px}
+
+/* receipt-style lines */
+.lines{border-top:1px dashed var(--line);margin-top:12px;padding-top:10px}
+.line{display:flex;justify-content:space-between;align-items:baseline;padding:4px 0;font-size:14px}
+.line span:last-child{font-family:var(--mono);font-weight:500}
+.line.total{font-weight:600;font-size:16px;border-top:1px solid var(--ink);margin-top:6px;padding-top:8px}
+.line.total span:last-child{font-weight:600}
+.pos{color:var(--ok)} .neg{color:var(--bad)}
+.tag{font-size:11px;font-weight:600;border-radius:6px;padding:2px 7px}
+.tag.ok{background:var(--ok-soft);color:var(--ok)} .tag.bad{background:var(--bad-soft);color:var(--bad)} .tag.warn{background:var(--warn-soft);color:var(--warn)}
+
+/* buttons */
+.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 14px;font-weight:600;cursor:pointer;min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn:hover{border-color:var(--ink-2)}
+.btn.primary{background:var(--ink);border-color:var(--ink);color:#fff}
+.btn.primary:hover{background:#3d2b1f}
+.btn.accent{background:var(--crema);border-color:var(--crema);color:#fff}
+.btn.ghost{background:none;border-color:transparent;color:var(--ink-2)}
+.btn.sm{min-height:34px;padding:6px 10px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap}
+
+/* denominations */
+details.denoms{margin-top:10px;border:1px dashed var(--line);border-radius:10px;padding:8px 12px}
+details.denoms summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--crema)}
+.denom-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-top:10px}
+.denom{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:13px}
+.denom b{min-width:44px;text-align:right;font-weight:500}
+.denom input{min-height:36px;padding:6px 8px;text-align:center}
+
+/* dynamic rows */
+.drow{display:grid;grid-template-columns:1fr 120px 38px;gap:8px;margin-bottom:8px}
+.srow{display:grid;grid-template-columns:1.4fr 1fr 1fr 80px 38px;gap:8px;margin-bottom:8px;align-items:center}
+.srow .meta{grid-column:1/-1;font-size:12px;color:var(--ink-2);font-family:var(--mono);margin-top:-4px;display:flex;justify-content:space-between}
+.x{width:38px;height:44px;border:1px solid var(--line);background:#fff;border-radius:10px;cursor:pointer;color:var(--ink-2)}
+.x:hover{color:var(--bad);border-color:var(--bad)}
+@media(max-width:560px){
+  .srow{grid-template-columns:1fr 1fr 70px 38px}
+  .srow select{grid-column:1/-1}
+}
+.head-cols{display:grid;grid-template-columns:1.4fr 1fr 1fr 80px 38px;gap:8px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2);margin-bottom:6px}
+@media(max-width:560px){.head-cols{display:none}}
+
+/* summary sticky */
+.summary{position:sticky;top:76px}
+.kpi{display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-bottom:1px dashed var(--line)}
+.kpi:last-of-type{border-bottom:0}
+.kpi .k{font-size:13px;color:var(--ink-2)}
+.kpi .v{font-family:var(--mono);font-size:20px;font-weight:600}
+.meter{height:10px;background:var(--crema-soft);border-radius:99px;overflow:hidden;position:relative;margin:6px 0 4px}
+.meter i{position:absolute;inset:0 auto 0 0;background:var(--ok);border-radius:99px;transition:width .3s}
+.meter b{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink)}
+.meter-legend{display:flex;justify-content:space-between;font-size:11px;color:var(--ink-2);font-family:var(--mono)}
+
+/* signature */
+.sig-wrap{border:1.5px dashed var(--ink-2);border-radius:10px;background:#fff;position:relative;height:150px;touch-action:none}
+.sig-wrap canvas{width:100%;height:100%;display:block;border-radius:10px;cursor:crosshair}
+.sig-wrap .hint{position:absolute;left:14px;bottom:10px;font-size:12px;color:var(--ink-2);pointer-events:none}
+.sig-wrap .base{position:absolute;left:14px;right:14px;bottom:30px;border-bottom:1px solid var(--line);pointer-events:none}
+
+/* schedule grid */
+.weekbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.weekbar .label{font-family:var(--serif);font-size:19px;font-weight:500;min-width:200px;text-align:center}
+.sched-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--radius);border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow)}
+table.sched{border-collapse:separate;border-spacing:0;width:100%;min-width:820px}
+table.sched th,table.sched td{border-bottom:1px solid var(--line);padding:8px;text-align:center;font-size:13px}
+table.sched th{background:#fbf6ec;font-weight:600;color:var(--ink-2);font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+table.sched th.today{color:var(--crema)}
+table.sched td.name,table.sched th.name{text-align:left;position:sticky;left:0;background:var(--card);z-index:2;min-width:140px;border-right:1px solid var(--line)}
+table.sched th.name{background:#fbf6ec}
+table.sched td.name b{display:block;font-weight:600}
+table.sched td.name small{color:var(--ink-2);font-family:var(--mono);font-size:11px}
+.cell{width:100%;min-height:48px;border:1px dashed var(--line);border-radius:9px;background:none;cursor:pointer;font-family:var(--mono);font-size:12px;color:var(--ink-2);padding:4px}
+.cell:hover{border-color:var(--crema);color:var(--crema)}
+.cell.has{border-style:solid;border-color:transparent;background:var(--crema-soft);color:var(--ink)}
+.cell.has small{display:block;color:var(--ink-2);font-size:10px}
+table.sched tfoot td{font-family:var(--mono);font-size:12px;background:#fbf6ec;font-weight:500}
+table.sched td.tot{font-family:var(--mono);font-size:12px;white-space:nowrap}
+
+/* labor */
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:14px}
+@media(min-width:820px){.tiles{grid-template-columns:repeat(4,1fr)}}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow)}
+.tile .k{font-size:12px;color:var(--ink-2);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.tile .v{font-family:var(--mono);font-size:24px;font-weight:600;margin-top:4px}
+.tile .d{font-size:12px;color:var(--ink-2);margin-top:2px}
+.bars{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;align-items:end;height:180px;padding:10px 4px 0;position:relative}
+.bar{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:5px}
+.bar .col{width:70%;max-width:46px;border-radius:7px 7px 3px 3px;background:var(--ok);min-height:3px;transition:height .3s}
+.bar .col.over{background:var(--bad)}
+.bar .col.none{background:var(--line)}
+.bar .pct{font-family:var(--mono);font-size:11px;font-weight:600}
+.bar .day{font-size:11px;color:var(--ink-2);text-transform:uppercase}
+.target-line{position:absolute;left:0;right:0;border-top:2px dashed var(--ink);pointer-events:none}
+.target-line span{position:absolute;right:0;top:-18px;font-size:11px;font-family:var(--mono);background:var(--card);padding:0 4px}
+table.data{width:100%;border-collapse:collapse;font-size:13px}
+table.data th,table.data td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:right}
+table.data th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-2);font-weight:600}
+table.data th:first-child,table.data td:first-child{text-align:left}
+table.data td{font-family:var(--mono)}
+table.data tfoot td{font-weight:600;border-top:1.5px solid var(--ink);border-bottom:0}
+.tablewrap{overflow-x:auto}
+
+/* staff list */
+.staff-row{display:grid;grid-template-columns:1.3fr 1fr 110px 90px 38px;gap:8px;align-items:center;margin-bottom:8px}
+@media(max-width:560px){.staff-row{grid-template-columns:1fr 1fr;}.staff-row .x{justify-self:end}}
+.switch{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-2)}
+
+/* modal */
+.scrim{position:fixed;inset:0;background:rgba(43,29,20,.45);z-index:50;display:none;align-items:flex-end;justify-content:center}
+.scrim.on{display:flex}
+.modal{background:var(--card);width:100%;max-width:440px;border-radius:18px 18px 0 0;padding:20px;max-height:90vh;overflow:auto}
+@media(min-width:600px){.scrim{align-items:center}.modal{border-radius:18px}}
+.modal h3{font-family:var(--serif);font-size:22px;margin:0 0 4px}
+.modal .sub{margin-bottom:14px}
+.presets{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 4px}
+.presets button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:6px 11px;font-size:12px;font-family:var(--mono);cursor:pointer}
+.presets button:hover{border-color:var(--crema);color:var(--crema)}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:11px 16px;border-radius:12px;font-weight:500;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:60;max-width:90vw}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.err{background:var(--bad)}
+@media(min-width:820px){.toast{bottom:28px}}
+.muted{color:var(--ink-2);font-size:13px}
+.hr{height:1px;background:var(--line);margin:14px 0}
+.loading{opacity:.55;pointer-events:none}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><span class="cup"></span><span id="cafeName">Second Cup</span></div>
+    <div class="spacer"></div>
+    <span id="connPill" class="pill demo">Demo mode</span>
+    <button class="iconbtn" id="openSettings" title="Settings" aria-label="Settings">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="tabs" id="tabs">
+    <button data-view="report" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>Daily report</button>
+    <button data-view="schedule"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Schedule</button>
+    <button data-view="labor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>Labor cost</button>
+    <button data-view="staff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2M16 3.1a4 4 0 0 1 0 7.8M21 21v-2a4 4 0 0 0-3-3.9"/></svg>Staff</button>
+  </nav>
+
+  <!-- ================= DAILY REPORT ================= -->
+  <section class="view on" id="view-report">
+    <h1 class="title">Daily report</h1>
+    <p class="sub">End-of-shift sales, cash-up and staff hours. Sent to Google Sheets when you sign off.</p>
+
+    <form id="reportForm" class="grid report-grid" autocomplete="off">
+      <div class="grid">
+        <div class="card">
+          <h2><span class="n">01</span>Shift</h2>
+          <div class="row">
+            <label class="f">Date<input type="date" id="r_date" required></label>
+            <label class="f">Shift
+              <select id="r_shift"><option>Full day</option><option>Morning</option><option>Evening</option></select>
+            </label>
+            <label class="f">Manager on duty<select id="r_manager"></select></label>
+            <label class="f">Customers / tickets<input type="number" id="r_customers" min="0" inputmode="numeric" placeholder="0"></label>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2><span class="n">02</span>Sales (from Z-report)</h2>
+          <div class="row">
+            <label class="f">Cash<div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" data-calc id="s_cash" placeholder="0.00"></div></label>
+            <label class="f">Card<div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" data-calc id="s_card" placeholder="0.00"></div></label>
+            <label class="f">Wolt<div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" data-calc id="s_wolt" placeholder="0.00"></div></label>
+            <label class="f">Foody<div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" data-calc id="s_foody" placeholder="0.00"></div></label>
+            <label class="f">Other / vouchers<div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" data-calc id="s_other" placeholder="0.00"></div></label>
+          </div>
+          <div class="hr"></div>
+          <div class="row">
+            <label class="f">Discounts<div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" data-calc id="d_discounts" placeholder="0.00"></div></label>
+            <label class="f">Refunds<div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" data-calc id="d_refunds" placeholder="0.00"></div></label>
+            <label class="f">Voids<div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" data-calc id="d_voids" placeholder="0.00"></div></label>
+            <label class="f">Staff meals / comps<div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" data-calc id="d_comps" placeholder="0.00"></div></label>
+          </div>
+          <div class="lines">
+            <div class="line"><span>Gross sales</span><span id="o_gross">€0.00</span></div>
+            <div class="line"><span>− Discounts, refunds, voids</span><span id="o_ded">€0.00</span></div>
+            <div class="line total"><span>Net sales</span><span id="o_net">€0.00</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2><span class="n">03</span>Cash drawer</h2>
+          <div class="row">
+            <label class="f">Opening float<div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" data-calc id="c_float" value="150.00"></div></label>
+            <label class="f">Cash counted<div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" data-calc id="c_counted" placeholder="0.00"></div></label>
+          </div>
+          <details class="denoms" id="denoms">
+            <summary>Count by notes &amp; coins</summary>
+            <div class="denom-grid" id="denomGrid"></div>
+            <p class="muted" style="margin:8px 0 0">Filling this in sets “Cash counted” automatically.</p>
+          </details>
+          <div class="lines">
+            <div class="line"><span>Float + cash sales</span><span id="o_fcs">€0.00</span></div>
+            <div class="line"><span>− Paid outs</span><span id="o_po">€0.00</span></div>
+            <div class="line"><span>Expected in drawer</span><span id="o_expected">€0.00</span></div>
+            <div class="line total"><span>Over / short <span id="o_ostag"></span></span><span id="o_os">€0.00</span></div>
+            <div class="line"><span>Cash to bank (counted − float)</span><span id="o_bank">€0.00</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2><span class="n">04</span>Paid outs / petty cash</h2>
+          <div id="payouts"></div>
+          <button type="button" class="btn sm" id="addPayout">+ Add paid out</button>
+        </div>
+
+        <div class="card">
+          <h2><span class="n">05</span>Staff on shift</h2>
+          <p class="muted" style="margin:-4px 0 12px">Pre-filled from this week’s schedule. Correct to actual times.</p>
+          <div class="head-cols"><span>Name</span><span>In</span><span>Out</span><span>Break (min)</span><span></span></div>
+          <div id="staffRows"></div>
+          <div class="btnrow"><button type="button" class="btn sm" id="addStaffRow">+ Add person</button><button type="button" class="btn sm ghost" id="refillStaff">↺ Reload from schedule</button></div>
+        </div>
+
+        <div class="card">
+          <h2><span class="n">06</span>Notes, wastage &amp; incidents</h2>
+          <textarea id="r_notes" placeholder="e.g. Milk delivery late, 6 croissants wasted, card machine down 10–10:30…"></textarea>
+        </div>
+
+        <div class="card">
+          <h2><span class="n">07</span>Sign-off</h2>
+          <div class="row" style="margin-bottom:10px">
+            <label class="f">Signed by<select id="r_signedby"></select></label>
+          </div>
+          <div class="sig-wrap" id="sigWrap"><div class="base"></div><span class="hint">Sign here</span><canvas id="sig"></canvas></div>
+          <div class="btnrow" style="margin-top:10px;justify-content:space-between">
+            <button type="button" class="btn sm ghost" id="clearSig">Clear signature</button>
+            <div class="btnrow">
+              <button type="button" class="btn" id="resetReport">Reset</button>
+              <button type="submit" class="btn primary" id="submitReport">Sign &amp; submit report</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live summary -->
+      <aside class="card summary">
+        <h2>Today at a glance</h2>
+        <div class="kpi"><span class="k">Net sales</span><span class="v" id="k_net">€0</span></div>
+        <div class="kpi"><span class="k">Staff hours</span><span class="v" id="k_hours">0.0h</span></div>
+        <div class="kpi"><span class="k">Labor cost</span><span class="v" id="k_cost">€0</span></div>
+        <div class="kpi" style="display:block">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span class="k">Labor %</span><span class="v" id="k_pct">—</span></div>
+          <div class="meter"><i id="k_meter"></i><b id="k_target"></b></div>
+          <div class="meter-legend"><span>0%</span><span id="k_tlabel">target 28%</span><span>60%</span></div>
+        </div>
+        <div class="kpi"><span class="k">Avg ticket</span><span class="v" id="k_avg">—</span></div>
+        <div class="kpi"><span class="k">Cash over/short</span><span class="v" id="k_os">€0</span></div>
+      </aside>
+    </form>
+  </section>
+
+  <!-- ================= SCHEDULE ================= -->
+  <section class="view" id="view-schedule">
+    <h1 class="title">Weekly schedule</h1>
+    <p class="sub">Tap a cell to set a shift. Hours and cost use each person’s hourly wage.</p>
+    <div class="weekbar">
+      <button class="btn sm" data-week="-1">‹ Prev</button>
+      <span class="label" id="weekLabel"></span>
+      <button class="btn sm" data-week="1">Next ›</button>
+      <div class="spacer"></div>
+      <button class="btn sm" id="copyPrev">Copy last week</button>
+      <button class="btn sm primary" id="saveSchedule">Save schedule</button>
+    </div>
+    <div class="sched-scroll"><table class="sched" id="schedTable"></table></div>
+    <p class="muted" style="margin-top:10px">Costs include the employer on-cost % set in Settings.</p>
+  </section>
+
+  <!-- ================= LABOR ================= -->
+  <section class="view" id="view-labor">
+    <h1 class="title">Labor cost</h1>
+    <p class="sub">Net sales from daily reports vs. what staff cost. Actual hours (from reports) win over scheduled hours.</p>
+    <div class="weekbar">
+      <button class="btn sm" data-week="-1">‹ Prev</button>
+      <span class="label" id="weekLabel2"></span>
+      <button class="btn sm" data-week="1">Next ›</button>
+    </div>
+    <div class="tiles">
+      <div class="tile"><div class="k">Net sales</div><div class="v" id="t_net">€0</div><div class="d" id="t_netd"></div></div>
+      <div class="tile"><div class="k">Labor cost</div><div class="v" id="t_cost">€0</div><div class="d" id="t_costd"></div></div>
+      <div class="tile"><div class="k">Labor %</div><div class="v" id="t_pct">—</div><div class="d" id="t_pctd"></div></div>
+      <div class="tile"><div class="k">Sales / labor hr</div><div class="v" id="t_splh">—</div><div class="d">net sales ÷ hours</div></div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <h2>Labor % by day</h2>
+      <div class="bars" id="bars"></div>
+    </div>
+    <div class="card">
+      <h2>Daily breakdown</h2>
+      <div class="tablewrap"><table class="data" id="laborTable"></table></div>
+    </div>
+  </section>
+
+  <!-- ================= STAFF ================= -->
+  <section class="view" id="view-staff">
+    <h1 class="title">Staff &amp; wages</h1>
+    <p class="sub">Hourly wages used for every labor-cost calculation.</p>
+    <div class="card">
+      <div class="head-cols" style="grid-template-columns:1.3fr 1fr 110px 90px 38px"><span>Name</span><span>Role</span><span>€ / hour</span><span>Active</span><span></span></div>
+      <div id="staffList"></div>
+      <div class="btnrow" style="justify-content:space-between;margin-top:6px">
+        <button class="btn sm" id="addStaff">+ Add staff member</button>
+        <button class="btn sm primary" id="saveStaff">Save staff</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Shift modal -->
+<div class="scrim" id="shiftModal">
+  <div class="modal">
+    <h3 id="sm_title">Shift</h3>
+    <p class="sub" id="sm_sub"></p>
+    <div class="presets" id="sm_presets"></div>
+    <div class="row" style="margin-top:10px">
+      <label class="f">Start<input type="time" id="sm_start" step="900"></label>
+      <label class="f">End<input type="time" id="sm_end" step="900"></label>
+      <label class="f">Break (min)<input type="number" id="sm_break" min="0" step="5" value="0"></label>
+    </div>
+    <p class="muted" id="sm_calc" style="margin:10px 0 0"></p>
+    <div class="btnrow" style="justify-content:space-between;margin-top:16px">
+      <button class="btn ghost" id="sm_off">Set day off</button>
+      <div class="btnrow"><button class="btn" id="sm_cancel">Cancel</button><button class="btn primary" id="sm_ok">Set shift</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- Settings modal -->
+<div class="scrim" id="settingsModal">
+  <div class="modal">
+    <h3>Settings</h3>
+    <p class="sub">Stored on this device only.</p>
+    <div class="grid">
+      <label class="f">Google Apps Script web app URL<input type="url" id="set_url" placeholder="https://script.google.com/macros/s/…/exec"></label>
+      <label class="f">Access PIN<input type="password" id="set_pin" placeholder="Same PIN as in Code.gs"></label>
+      <div class="row">
+        <label class="f">Target labor %<input type="number" id="set_target" min="1" max="100" step="0.5"></label>
+        <label class="f">Employer on-cost %<input type="number" id="set_oncost" min="0" max="100" step="0.1"></label>
+      </div>
+      <p class="muted" style="margin:0">On-cost covers employer social insurance and similar contributions added on top of the hourly wage. Ask your accountant for the right figure; leave at 0 to use wages only.</p>
+    </div>
+    <div class="btnrow" style="justify-content:space-between;margin-top:16px">
+      <button class="btn ghost" id="set_demo">Use demo data</button>
+      <div class="btnrow"><button class="btn" id="set_cancel">Cancel</button><button class="btn primary" id="set_ok">Save &amp; connect</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   CONFIG — edit these for your café
+   ========================================================= */
+const CONFIG = {
+  CAFE_NAME: 'Second Cup',
+  // Paste your deployed Apps Script /exec URL here to hard-wire it for every device.
+  // (Leave blank to let each device enter it in Settings.)
+  API_URL: '',
+  DEFAULT_FLOAT: 150,
+  TARGET_LABOR_PCT: 28,
+  EMPLOYER_ONCOST_PCT: 0,
+  SHIFT_PRESETS: [
+    {label:'Open 07–15', start:'07:00', end:'15:00', brk:30},
+    {label:'Mid 10–18',  start:'10:00', end:'18:00', brk:30},
+    {label:'Close 15–23',start:'15:00', end:'23:00', brk:30},
+    {label:'Short 08–12',start:'08:00', end:'12:00', brk:0},
+  ],
+  DENOMS: [50,20,10,5,2,1,0.5,0.2,0.1,0.05],
+};
+
+/* ---------- tiny helpers ---------- */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const num = v => { const n = parseFloat(v); return isFinite(n) ? n : 0; };
+const eur = (n, d=2) => (n<0?'−':'') + '€' + Math.abs(n).toLocaleString('en-GB',{minimumFractionDigits:d,maximumFractionDigits:d});
+const pct = n => isFinite(n) ? (n*100).toFixed(1)+'%' : '—';
+const pad = n => String(n).padStart(2,'0');
+const iso = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parseISO = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y,m-1,d); };
+const addDays = (d,n) => { const x = new Date(d); x.setDate(x.getDate()+n); return x; };
+const mondayOf = d => { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); const wd = (x.getDay()+6)%7; return addDays(x,-wd); };
+const DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const esc = s => String(s??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Math.random().toString(36).slice(2,9);
+
+function hoursOf(start, end, brk){
+  if(!start || !end) return 0;
+  const [sh,sm] = start.split(':').map(Number), [eh,em] = end.split(':').map(Number);
+  let mins = (eh*60+em) - (sh*60+sm);
+  if(mins < 0) mins += 24*60;           // overnight shift
+  mins -= num(brk);
+  return Math.max(0, mins/60);
+}
+
+const store = {
+  get(k, def){ try{ const v = localStorage.getItem('sc_'+k); return v==null ? def : JSON.parse(v); }catch(e){ return def; } },
+  set(k, v){ try{ localStorage.setItem('sc_'+k, JSON.stringify(v)); }catch(e){} },
+};
+
+function toast(msg, err){
+  const t = $('#toast'); t.textContent = msg; t.className = 'toast on' + (err?' err':'');
+  clearTimeout(toast._t); toast._t = setTimeout(()=> t.className='toast', 2800);
+}
+
+/* ---------- settings ---------- */
+const settings = {
+  url: store.get('url', CONFIG.API_URL),
+  pin: store.get('pin', ''),
+  target: store.get('target', CONFIG.TARGET_LABOR_PCT),
+  oncost: store.get('oncost', CONFIG.EMPLOYER_ONCOST_PCT),
+};
+const isLive = () => !!settings.url;
+const costOf = (hours, wage) => hours * num(wage) * (1 + num(settings.oncost)/100);
+
+/* =========================================================
+   DATA LAYER — demo (in-memory) or live (Google Apps Script)
+   ========================================================= */
+const demo = (() => {
+  const staff = [
+    {id:'s1', name:'Elena',   role:'Shift lead', wage:11.00, active:true},
+    {id:'s2', name:'Maria',   role:'Barista',    wage:9.50,  active:true},
+    {id:'s3', name:'Andreas', role:'Barista',    wage:9.00,  active:true},
+    {id:'s4', name:'Nikos',   role:'Kitchen',    wage:9.50,  active:true},
+    {id:'s5', name:'Sofia',   role:'Barista',    wage:8.50,  active:true},
+  ];
+  const pattern = { // per weekday index: [name, start, end, brk]
+    0:[['Elena','07:00','15:00',30],['Maria','07:00','15:00',30],['Andreas','15:00','23:00',30]],
+    1:[['Elena','07:00','15:00',30],['Sofia','10:00','18:00',30],['Andreas','15:00','23:00',30]],
+    2:[['Maria','07:00','15:00',30],['Nikos','08:00','16:00',30],['Sofia','15:00','23:00',30]],
+    3:[['Elena','07:00','15:00',30],['Maria','10:00','18:00',30],['Andreas','15:00','23:00',30]],
+    4:[['Elena','07:00','15:00',30],['Nikos','08:00','16:00',30],['Maria','15:00','23:00',30],['Sofia','17:00','23:00',0]],
+    5:[['Elena','08:00','16:00',30],['Maria','08:00','16:00',30],['Nikos','09:00','17:00',30],['Andreas','15:00','23:00',30],['Sofia','16:00','23:00',30]],
+    6:[['Maria','08:00','16:00',30],['Nikos','09:00','15:00',0],['Sofia','15:00','22:00',30]],
+  };
+  const shifts = [], reports = [];
+  const thisMon = mondayOf(new Date());
+  [-7, 0].forEach(off => {
+    for(let i=0;i<7;i++){
+      const date = iso(addDays(thisMon, off+i));
+      pattern[i].forEach(([name,start,end,brk]) => shifts.push({date, name, start, end, brk}));
+    }
+  });
+  // reports for past days (last week + this week up to yesterday)
+  const today = new Date(); today.setHours(0,0,0,0);
+  const base = [980,1040,1010,1120,1480,1720,1390];
+  for(let off=-7; off<7; off++){
+    const d = addDays(thisMon, off);
+    if(d >= today) break;
+    const i = (d.getDay()+6)%7, jitter = 0.9 + ((off*37)%20)/100;
+    const gross = Math.round(base[i]*jitter);
+    const cash = Math.round(gross*.28), wolt = Math.round(gross*.12), foody = Math.round(gross*.06), other = 0;
+    const card = gross - cash - wolt - foody;
+    const ded = Math.round(gross*.02);
+    const date = iso(d);
+    reports.push({ date, shift:'Full day', manager:'Elena', customers: Math.round(gross/7.4),
+      sales:{cash,card,wolt,foody,other}, gross, discounts:ded, refunds:0, voids:0, comps:12, net: gross-ded,
+      staff: pattern[i].map(([name,start,end,brk]) => ({name,start,end,brk: i===5 && name==='Sofia' ? 0 : brk})) });
+  }
+  return { staff, shifts, reports };
+})();
+
+const api = {
+  async load(weekStart){
+    if(!isLive()){
+      const end = iso(addDays(parseISO(weekStart),6));
+      const inWeek = r => r.date >= weekStart && r.date <= end;
+      return { staff: demo.staff, shifts: demo.shifts.filter(inWeek), reports: demo.reports.filter(inWeek) };
+    }
+    const u = `${settings.url}?action=load&week=${encodeURIComponent(weekStart)}&pin=${encodeURIComponent(settings.pin)}`;
+    const res = await fetch(u); const j = await res.json();
+    if(!j.ok) throw new Error(j.error || 'Load failed');
+    return j.data;
+  },
+  async post(action, data){
+    if(!isLive()) return { ok:true, demo:true };
+    // text/plain avoids a CORS pre-flight, which Apps Script can't answer
+    const res = await fetch(settings.url, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify({ action, pin: settings.pin, data }) });
+    const j = await res.json();
+    if(!j.ok) throw new Error(j.error || 'Save failed');
+    return j;
+  },
+  async saveReport(r){
+    if(!isLive()){ demo.reports = demo.reports.filter(x => !(x.date===r.date && x.shift===r.shift)); demo.reports.push(r); }
+    return this.post('saveReport', r);
+  },
+  async saveSchedule(weekStart, shifts){
+    if(!isLive()){ const end = iso(addDays(parseISO(weekStart),6));
+      demo.shifts = demo.shifts.filter(s => s.date < weekStart || s.date > end).concat(shifts); }
+    return this.post('saveSchedule', { weekStart, shifts });
+  },
+  async saveStaff(staff){
+    if(!isLive()){ demo.staff = staff; }
+    return this.post('saveStaff', staff);
+  },
+};
+
+/* ---------- app state ---------- */
+const state = {
+  week: iso(mondayOf(new Date())),
+  staff: [], shifts: [], reports: [],
+  draftShifts: [],   // schedule being edited
+};
+const wageOf = name => num((state.staff.find(s => s.name === name) || {}).wage);
+const activeStaff = () => state.staff.filter(s => s.active !== false);
+
+async function loadWeek(){
+  document.body.classList.add('loading');
+  try{
+    const d = await api.load(state.week);
+    state.staff = d.staff || []; state.shifts = d.shifts || []; state.reports = d.reports || [];
+    state.draftShifts = state.shifts.map(s => ({...s}));
+  }catch(e){ toast('Couldn’t reach Google Sheets: ' + e.message, true); }
+  document.body.classList.remove('loading');
+  renderAll();
+}
+
+/* =========================================================
+   DAILY REPORT
+   ========================================================= */
+function staffOptions(sel){
+  return '<option value="">— select —</option>' + activeStaff().map(s => `<option ${s.name===sel?'selected':''}>${esc(s.name)}</option>`).join('');
+}
+function fillSelects(){
+  const m = $('#r_manager').value, sb = $('#r_signedby').value;
+  $('#r_manager').innerHTML = staffOptions(m || (activeStaff().find(s=>/lead|manager/i.test(s.role))||{}).name);
+  $('#r_signedby').innerHTML = staffOptions(sb || $('#r_manager').value);
+}
+
+function buildDenoms(){
+  $('#denomGrid').innerHTML = CONFIG.DENOMS.map(d =>
+    `<label class="denom"><b>${d>=1?'€'+d:(d*100)+'c'}</b> × <input type="number" min="0" inputmode="numeric" data-denom="${d}" placeholder="0"></label>`).join('');
+  $$('[data-denom]').forEach(i => i.addEventListener('input', () => {
+    const tot = $$('[data-denom]').reduce((a,i) => a + num(i.value)*num(i.dataset.denom), 0);
+    $('#c_counted').value = tot ? tot.toFixed(2) : '';
+    calc();
+  }));
+}
+
+function addPayoutRow(p={desc:'',amt:''}){
+  const el = document.createElement('div'); el.className = 'drow';
+  el.innerHTML = `<input type="text" placeholder="What for? e.g. Milk top-up" value="${esc(p.desc)}" data-pdesc>
+    <div class="money"><input type="number" step="0.01" min="0" inputmode="decimal" placeholder="0.00" value="${esc(p.amt)}" data-pamt></div>
+    <button type="button" class="x" aria-label="Remove">✕</button>`;
+  el.querySelector('.x').onclick = () => { el.remove(); calc(); };
+  el.querySelector('[data-pamt]').oninput = calc;
+  $('#payouts').appendChild(el);
+}
+
+function addStaffRow(s={name:'',start:'',end:'',brk:0}){
+  const el = document.createElement('div'); el.className = 'srow';
+  el.innerHTML = `<select data-sname>${staffOptions(s.name)}</select>
+    <input type="time" step="300" value="${esc(s.start)}" data-sstart aria-label="In">
+    <input type="time" step="300" value="${esc(s.end)}" data-send aria-label="Out">
+    <input type="number" min="0" step="5" value="${esc(s.brk)}" data-sbrk aria-label="Break minutes">
+    <button type="button" class="x" aria-label="Remove">✕</button>
+    <div class="meta"><span data-shours></span><span data-scost></span></div>`;
+  el.querySelector('.x').onclick = () => { el.remove(); calc(); };
+  el.querySelectorAll('input,select').forEach(i => i.addEventListener('input', calc));
+  $('#staffRows').appendChild(el);
+}
+
+function fillStaffFromSchedule(){
+  $('#staffRows').innerHTML = '';
+  const date = $('#r_date').value;
+  // look in loaded week first, fallback to draft
+  const list = state.shifts.filter(s => s.date === date);
+  if(list.length) list.forEach(s => addStaffRow(s)); else addStaffRow();
+  calc();
+}
+
+function readReport(){
+  const sales = { cash:num($('#s_cash').value), card:num($('#s_card').value), wolt:num($('#s_wolt').value), foody:num($('#s_foody').value), other:num($('#s_other').value) };
+  const gross = Object.values(sales).reduce((a,b)=>a+b,0);
+  const discounts = num($('#d_discounts').value), refunds = num($('#d_refunds').value), voids = num($('#d_voids').value), comps = num($('#d_comps').value);
+  const net = gross - discounts - refunds - voids;
+  const payouts = $$('#payouts .drow').map(r => ({ desc: r.querySelector('[data-pdesc]').value.trim(), amt: num(r.querySelector('[data-pamt]').value) })).filter(p => p.desc || p.amt);
+  const payoutsTotal = payouts.reduce((a,p)=>a+p.amt,0);
+  const float = num($('#c_float').value), counted = num($('#c_counted').value);
+  const expectedCash = float + sales.cash - payoutsTotal;
+  const overShort = counted - expectedCash;
+  const staff = $$('#staffRows .srow').map(r => ({
+    name: r.querySelector('[data-sname]').value, start: r.querySelector('[data-sstart]').value,
+    end: r.querySelector('[data-send]').value, brk: num(r.querySelector('[data-sbrk]').value) })).filter(s => s.name);
+  staff.forEach(s => { s.hours = +hoursOf(s.start,s.end,s.brk).toFixed(2); s.wage = wageOf(s.name); s.cost = +costOf(s.hours, s.wage).toFixed(2); });
+  const laborHours = staff.reduce((a,s)=>a+s.hours,0), laborCost = staff.reduce((a,s)=>a+s.cost,0);
+  return {
+    date: $('#r_date').value, shift: $('#r_shift').value, manager: $('#r_manager').value,
+    customers: num($('#r_customers').value), sales, gross, discounts, refunds, voids, comps, net,
+    float, counted, payouts, payoutsTotal, expectedCash, overShort, cashToBank: counted - float,
+    staff, laborHours, laborCost, laborPct: net ? laborCost/net : null,
+    notes: $('#r_notes').value.trim(), signedBy: $('#r_signedby').value,
+  };
+}
+
+function calc(){
+  const r = readReport();
+  $('#o_gross').textContent = eur(r.gross);
+  $('#o_ded').textContent = eur(r.discounts + r.refunds + r.voids);
+  $('#o_net').textContent = eur(r.net);
+  $('#o_fcs').textContent = eur(r.float + r.sales.cash);
+  $('#o_po').textContent = eur(r.payoutsTotal);
+  $('#o_expected').textContent = eur(r.expectedCash);
+  const hasCount = $('#c_counted').value !== '';
+  const os = $('#o_os'); os.textContent = hasCount ? eur(r.overShort) : '—';
+  os.className = !hasCount ? '' : Math.abs(r.overShort) < 0.005 ? '' : r.overShort > 0 ? 'pos' : 'neg';
+  $('#o_ostag').innerHTML = !hasCount ? '' : Math.abs(r.overShort) < 0.005 ? '<span class="tag ok">Balanced</span>' :
+    Math.abs(r.overShort) <= 2 ? '<span class="tag warn">Minor</span>' : `<span class="tag bad">${r.overShort>0?'Over':'Short'}</span>`;
+  $('#o_bank').textContent = hasCount ? eur(r.cashToBank) : '—';
+
+  // per-row hours
+  $$('#staffRows .srow').forEach(row => {
+    const name = row.querySelector('[data-sname]').value;
+    const h = hoursOf(row.querySelector('[data-sstart]').value, row.querySelector('[data-send]').value, row.querySelector('[data-sbrk]').value);
+    row.querySelector('[data-shours]').textContent = h ? h.toFixed(2)+' h' : '';
+    row.querySelector('[data-scost]').textContent = name && h ? `${eur(wageOf(name))}/h → ${eur(costOf(h, wageOf(name)))}` : '';
+  });
+
+  $('#k_net').textContent = eur(r.net,0);
+  $('#k_hours').textContent = r.laborHours.toFixed(1)+'h';
+  $('#k_cost').textContent = eur(r.laborCost,0);
+  const p = r.laborPct, t = num(settings.target)/100;
+  $('#k_pct').textContent = p==null ? '—' : pct(p);
+  $('#k_pct').className = 'v ' + (p==null ? '' : p > t ? 'neg' : 'pos');
+  $('#k_meter').style.width = (p==null ? 0 : Math.min(100, p/0.6*100)) + '%';
+  $('#k_meter').style.background = p!=null && p > t ? 'var(--bad)' : 'var(--ok)';
+  $('#k_target').style.left = Math.min(100, t/0.6*100) + '%';
+  $('#k_tlabel').textContent = 'target ' + num(settings.target) + '%';
+  $('#k_avg').textContent = r.customers ? eur(r.net / r.customers) : '—';
+  $('#k_os').textContent = hasCount ? eur(r.overShort) : '—';
+  $('#k_os').className = 'v ' + (!hasCount || Math.abs(r.overShort)<0.005 ? '' : r.overShort>0 ? 'pos' : 'neg');
+}
+
+function resetReport(keepDate){
+  const date = keepDate || iso(new Date());
+  $('#reportForm').reset();
+  $('#r_date').value = date;
+  $('#c_float').value = CONFIG.DEFAULT_FLOAT.toFixed(2);
+  $('#payouts').innerHTML = ''; addPayoutRow();
+  fillSelects();
+  sig.clear();
+  fillStaffFromSchedule();
+}
+
+/* signature pad */
+const sig = (() => {
+  const c = $('#sig'), wrap = $('#sigWrap'); let ctx, drawing = false, dirty = false, last = null;
+  function size(){
+    const r = wrap.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+    const data = dirty ? c.toDataURL() : null;
+    c.width = r.width*dpr; c.height = r.height*dpr;
+    ctx = c.getContext('2d'); ctx.scale(dpr,dpr);
+    ctx.lineWidth = 2.2; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#2b1d14';
+    if(data){ const img = new Image(); img.onload = () => ctx.drawImage(img,0,0,r.width,r.height); img.src = data; }
+  }
+  const pos = e => { const r = c.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; };
+  c.addEventListener('pointerdown', e => { drawing = true; last = pos(e); c.setPointerCapture(e.pointerId); wrap.querySelector('.hint').style.opacity = 0; });
+  c.addEventListener('pointermove', e => { if(!drawing) return; const p = pos(e);
+    ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke(); last = p; dirty = true; });
+  ['pointerup','pointercancel','pointerleave'].forEach(ev => c.addEventListener(ev, () => drawing = false));
+  window.addEventListener('resize', size);
+  setTimeout(size, 0);
+  return {
+    clear(){ if(!ctx) size(); ctx.clearRect(0,0,c.width,c.height); dirty = false; wrap.querySelector('.hint').style.opacity = 1; },
+    isEmpty: () => !dirty,
+    data: () => c.toDataURL('image/png'),
+    resize: size,
+  };
+})();
+
+async function submitReport(e){
+  e.preventDefault();
+  const r = readReport();
+  if(!r.date) return toast('Pick a date', true);
+  if(!r.gross) return toast('Enter at least one sales figure', true);
+  if($('#c_counted').value === '') return toast('Enter the cash counted', true);
+  if(!r.signedBy) return toast('Choose who is signing', true);
+  if(sig.isEmpty()) return toast('Please sign before submitting', true);
+  r.signature = sig.data();
+  r.submittedAt = new Date().toISOString();
+  const btn = $('#submitReport'); btn.disabled = true; btn.textContent = 'Sending…';
+  try{
+    const res = await api.saveReport(r);
+    toast(res.demo ? 'Saved (demo — connect Sheets in Settings)' : 'Report saved to Google Sheets ✓');
+    // refresh week data so Labor tab updates
+    if(mondayOf(parseISO(r.date)).getTime() === parseISO(state.week).getTime()){
+      state.reports = state.reports.filter(x => !(x.date===r.date && x.shift===r.shift)).concat([r]);
+    }
+    resetReport(r.date); renderLabor();
+  }catch(err){ toast('Not saved: ' + err.message, true); }
+  btn.disabled = false; btn.textContent = 'Sign & submit report';
+}
+
+/* =========================================================
+   SCHEDULE
+   ========================================================= */
+function weekDates(){ const m = parseISO(state.week); return DAYS.map((_,i) => iso(addDays(m,i))); }
+function weekLabel(){
+  const m = parseISO(state.week), s = addDays(m,6);
+  const f = d => d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+  return `${f(m)} – ${f(s)} ${s.getFullYear()}`;
+}
+
+function renderSchedule(){
+  $('#weekLabel').textContent = weekLabel();
+  const dates = weekDates(), todayIso = iso(new Date());
+  const people = activeStaff();
+  let html = '<thead><tr><th class="name">Staff</th>' + dates.map((d,i) =>
+    `<th class="${d===todayIso?'today':''}">${DAYS[i]}<br><span style="font-family:var(--mono);font-weight:500">${parseISO(d).getDate()}</span></th>`).join('') + '<th>Week</th></tr></thead><tbody>';
+  const dayH = Array(7).fill(0), dayC = Array(7).fill(0);
+  people.forEach(p => {
+    let wh = 0, wc = 0;
+    html += `<tr><td class="name"><b>${esc(p.name)}</b><small>${esc(p.role)} · ${eur(num(p.wage))}/h</small></td>`;
+    dates.forEach((d,i) => {
+      const s = state.draftShifts.find(x => x.date===d && x.name===p.name);
+      if(s){ const h = hoursOf(s.start,s.end,s.brk), c = costOf(h,p.wage); wh+=h; wc+=c; dayH[i]+=h; dayC[i]+=c;
+        html += `<td><button class="cell has" data-d="${d}" data-n="${esc(p.name)}">${s.start}–${s.end}<small>${h.toFixed(1)}h · ${eur(c,0)}</small></button></td>`;
+      } else html += `<td><button class="cell" data-d="${d}" data-n="${esc(p.name)}">+</button></td>`;
+    });
+    html += `<td class="tot">${wh.toFixed(1)}h<br>${eur(wc,0)}</td></tr>`;
+  });
+  html += '</tbody><tfoot><tr><td class="name" style="background:#fbf6ec">Day total</td>' +
+    dayH.map((h,i) => `<td>${h.toFixed(1)}h<br>${eur(dayC[i],0)}</td>`).join('') +
+    `<td>${dayH.reduce((a,b)=>a+b,0).toFixed(1)}h<br>${eur(dayC.reduce((a,b)=>a+b,0),0)}</td></tr></tfoot>`;
+  $('#schedTable').innerHTML = html;
+  $$('#schedTable .cell').forEach(b => b.onclick = () => openShift(b.dataset.d, b.dataset.n));
+}
+
+let editing = null;
+function openShift(date, name){
+  editing = {date, name};
+  const s = state.draftShifts.find(x => x.date===date && x.name===name) || {start:'',end:'',brk:30};
+  $('#sm_title').textContent = name;
+  $('#sm_sub').textContent = parseISO(date).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+  $('#sm_start').value = s.start; $('#sm_end').value = s.end; $('#sm_break').value = s.brk;
+  $('#sm_presets').innerHTML = CONFIG.SHIFT_PRESETS.map((p,i) => `<button data-p="${i}">${p.label}</button>`).join('');
+  $$('#sm_presets button').forEach(b => b.onclick = () => { const p = CONFIG.SHIFT_PRESETS[b.dataset.p];
+    $('#sm_start').value = p.start; $('#sm_end').value = p.end; $('#sm_break').value = p.brk; shiftCalc(); });
+  shiftCalc(); $('#shiftModal').classList.add('on');
+}
+function shiftCalc(){
+  const h = hoursOf($('#sm_start').value, $('#sm_end').value, $('#sm_break').value);
+  $('#sm_calc').textContent = h ? `${h.toFixed(2)} paid hours · ${eur(costOf(h, wageOf(editing.name)))}` : 'Pick a start and end time';
+}
+['#sm_start','#sm_end','#sm_break'].forEach(s => $(s).addEventListener('input', shiftCalc));
+const closeShift = () => $('#shiftModal').classList.remove('on');
+$('#sm_cancel').onclick = closeShift;
+$('#sm_off').onclick = () => { state.draftShifts = state.draftShifts.filter(x => !(x.date===editing.date && x.name===editing.name)); closeShift(); renderSchedule(); };
+$('#sm_ok').onclick = () => {
+  const start = $('#sm_start').value, end = $('#sm_end').value;
+  if(!start || !end) return toast('Set start and end', true);
+  state.draftShifts = state.draftShifts.filter(x => !(x.date===editing.date && x.name===editing.name));
+  state.draftShifts.push({ date: editing.date, name: editing.name, start, end, brk: num($('#sm_break').value) });
+  closeShift(); renderSchedule();
+};
+
+$('#copyPrev').onclick = async () => {
+  const prev = iso(addDays(parseISO(state.week), -7));
+  try{
+    const d = await api.load(prev);
+    state.draftShifts = (d.shifts||[]).map(s => ({...s, date: iso(addDays(parseISO(s.date), 7))}));
+    renderSchedule(); toast('Copied last week — press Save to keep it');
+  }catch(e){ toast(e.message, true); }
+};
+$('#saveSchedule').onclick = async () => {
+  const shifts = state.draftShifts.map(s => { const h = hoursOf(s.start,s.end,s.brk), w = wageOf(s.name);
+    return {...s, hours:+h.toFixed(2), wage:w, cost:+costOf(h,w).toFixed(2)}; });
+  try{ const r = await api.saveSchedule(state.week, shifts);
+    state.shifts = shifts.map(s => ({...s}));
+    toast(r.demo ? 'Schedule saved (demo)' : 'Schedule saved to Google Sheets ✓'); renderLabor(); fillStaffFromSchedule();
+  }catch(e){ toast('Not saved: ' + e.message, true); }
+};
+
+/* =========================================================
+   LABOR
+   ========================================================= */
+function renderLabor(){
+  $('#weekLabel2').textContent = weekLabel();
+  const dates = weekDates(), t = num(settings.target)/100;
+  const rows = dates.map((d,i) => {
+    const reps = state.reports.filter(r => r.date === d);
+    const net = reps.reduce((a,r)=>a+num(r.net),0);
+    const sched = state.shifts.filter(s => s.date===d);
+    const schedH = sched.reduce((a,s)=>a+hoursOf(s.start,s.end,s.brk),0);
+    const schedC = sched.reduce((a,s)=>a+costOf(hoursOf(s.start,s.end,s.brk), wageOf(s.name)),0);
+    const act = reps.flatMap(r => r.staff || []);
+    const actH = act.reduce((a,s)=>a+hoursOf(s.start,s.end,s.brk),0);
+    const actC = act.reduce((a,s)=>a+costOf(hoursOf(s.start,s.end,s.brk), wageOf(s.name)),0);
+    const useActual = act.length > 0;
+    const hours = useActual ? actH : schedH, cost = useActual ? actC : schedC;
+    return { d, day: DAYS[i], net, schedH, schedC, actH, actC, hours, cost, useActual, pct: net ? cost/net : null, hasReport: reps.length>0 };
+  });
+  const tot = rows.reduce((a,r) => ({ net:a.net+r.net, cost:a.cost+(r.hasReport?r.cost:0), hours:a.hours+(r.hasReport?r.hours:0), schedC:a.schedC+r.schedC, days:a.days+(r.hasReport?1:0) }), {net:0,cost:0,hours:0,schedC:0,days:0});
+  const p = tot.net ? tot.cost/tot.net : null;
+  $('#t_net').textContent = eur(tot.net,0); $('#t_netd').textContent = `${tot.days} of 7 days reported`;
+  $('#t_cost').textContent = eur(tot.cost,0); $('#t_costd').textContent = `scheduled for full week: ${eur(tot.schedC,0)}`;
+  $('#t_pct').textContent = p==null ? '—' : pct(p); $('#t_pct').className = 'v ' + (p==null?'':p>t?'neg':'pos');
+  $('#t_pctd').textContent = `target ${num(settings.target)}%`;
+  $('#t_splh').textContent = tot.hours ? eur(tot.net/tot.hours) : '—';
+
+  const maxP = Math.max(0.5, t*1.4, ...rows.map(r => r.pct||0));
+  $('#bars').innerHTML = rows.map(r => `<div class="bar">
+      <span class="pct ${r.pct!=null && r.pct>t ? 'neg':''}">${r.pct==null?'—':Math.round(r.pct*100)+'%'}</span>
+      <div class="col ${r.pct==null?'none':r.pct>t?'over':''}" style="height:${r.pct==null?3:Math.max(3,r.pct/maxP*130)}px" title="${r.d}"></div>
+      <span class="day">${r.day}</span></div>`).join('') +
+    `<div class="target-line" style="bottom:${t/maxP*130 + 22}px"><span>target ${num(settings.target)}%</span></div>`;
+
+  $('#laborTable').innerHTML = `<thead><tr><th>Day</th><th>Net sales</th><th>Sched. hrs</th><th>Actual hrs</th><th>Labor cost</th><th>Labor %</th><th>Source</th></tr></thead><tbody>` +
+    rows.map(r => `<tr><td>${r.day} ${parseISO(r.d).getDate()}</td><td>${r.hasReport?eur(r.net):'—'}</td><td>${r.schedH.toFixed(1)}</td><td>${r.useActual?r.actH.toFixed(1):'—'}</td><td>${eur(r.cost)}</td>
+      <td class="${r.pct!=null && r.pct>t?'neg':r.pct!=null?'pos':''}">${r.pct==null?'—':pct(r.pct)}</td>
+      <td style="font-family:var(--sans)">${r.useActual?'<span class="tag ok">Actual</span>':'<span class="tag warn">Schedule</span>'}</td></tr>`).join('') +
+    `</tbody><tfoot><tr><td>Reported days</td><td>${eur(tot.net)}</td><td></td><td>${tot.hours.toFixed(1)}</td><td>${eur(tot.cost)}</td><td>${p==null?'—':pct(p)}</td><td></td></tr></tfoot>`;
+}
+
+/* =========================================================
+   STAFF
+   ========================================================= */
+let staffDraft = [];
+function renderStaff(){
+  staffDraft = state.staff.map(s => ({...s}));
+  drawStaff();
+}
+function drawStaff(){
+  $('#staffList').innerHTML = staffDraft.map((s,i) => `<div class="staff-row" data-i="${i}">
+    <input type="text" value="${esc(s.name)}" placeholder="Name" data-k="name">
+    <input type="text" value="${esc(s.role)}" placeholder="Role" data-k="role">
+    <div class="money"><input type="number" step="0.05" min="0" value="${esc(s.wage)}" data-k="wage"></div>
+    <label class="switch"><input type="checkbox" ${s.active!==false?'checked':''} data-k="active"> Active</label>
+    <button class="x" aria-label="Remove">✕</button></div>`).join('');
+  $$('#staffList .staff-row').forEach(row => {
+    const i = +row.dataset.i;
+    row.querySelectorAll('[data-k]').forEach(inp => inp.addEventListener('input', () => {
+      const k = inp.dataset.k; staffDraft[i][k] = k==='active' ? inp.checked : k==='wage' ? num(inp.value) : inp.value; }));
+    row.querySelector('.x').onclick = () => { staffDraft.splice(i,1); drawStaff(); };
+  });
+}
+$('#addStaff').onclick = () => { staffDraft.push({id:uid(), name:'', role:'Barista', wage:9, active:true}); drawStaff(); };
+$('#saveStaff').onclick = async () => {
+  const clean = staffDraft.filter(s => s.name.trim()).map(s => ({...s, name:s.name.trim(), id: s.id || uid()}));
+  try{ const r = await api.saveStaff(clean); state.staff = clean; toast(r.demo ? 'Staff saved (demo)' : 'Staff saved to Google Sheets ✓'); renderAll(true); }
+  catch(e){ toast('Not saved: ' + e.message, true); }
+};
+
+/* =========================================================
+   SETTINGS + NAV
+   ========================================================= */
+function renderConn(){
+  const p = $('#connPill');
+  p.className = 'pill ' + (isLive() ? 'live' : 'demo');
+  p.textContent = isLive() ? 'Google Sheets' : 'Demo mode';
+}
+$('#openSettings').onclick = () => {
+  $('#set_url').value = settings.url; $('#set_pin').value = settings.pin;
+  $('#set_target').value = settings.target; $('#set_oncost').value = settings.oncost;
+  $('#settingsModal').classList.add('on');
+};
+$('#set_cancel').onclick = () => $('#settingsModal').classList.remove('on');
+$('#set_demo').onclick = () => { $('#set_url').value = ''; $('#set_ok').click(); };
+$('#set_ok').onclick = () => {
+  settings.url = $('#set_url').value.trim(); settings.pin = $('#set_pin').value;
+  settings.target = num($('#set_target').value) || CONFIG.TARGET_LABOR_PCT; settings.oncost = num($('#set_oncost').value);
+  Object.entries(settings).forEach(([k,v]) => store.set(k,v));
+  $('#settingsModal').classList.remove('on'); renderConn(); loadWeek();
+};
+$$('.scrim').forEach(s => s.addEventListener('click', e => { if(e.target === s) s.classList.remove('on'); }));
+
+function show(view){
+  $$('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.view === view));
+  $$('.view').forEach(v => v.classList.toggle('on', v.id === 'view-'+view));
+  if(view === 'report') setTimeout(sig.resize, 0);
+  store.set('view', view);
+  window.scrollTo({top:0});
+}
+$$('#tabs button').forEach(b => b.onclick = () => show(b.dataset.view));
+$$('[data-week]').forEach(b => b.onclick = () => { state.week = iso(addDays(parseISO(state.week), 7*+b.dataset.week)); loadWeek(); });
+
+function renderAll(keepReport){
+  renderConn(); fillSelects();
+  $$('#staffRows [data-sname]').forEach(s => { const v = s.value; s.innerHTML = staffOptions(v); });
+  renderSchedule(); renderLabor(); renderStaff();
+  if(!keepReport && !renderAll._done){ resetReport(); renderAll._done = true; } else calc();
+}
+
+/* report wiring */
+$$('[data-calc]').forEach(i => i.addEventListener('input', calc));
+$('#r_customers').addEventListener('input', calc);
+$('#addPayout').onclick = () => addPayoutRow();
+$('#addStaffRow').onclick = () => addStaffRow();
+$('#refillStaff').onclick = fillStaffFromSchedule;
+$('#clearSig').onclick = () => sig.clear();
+$('#resetReport').onclick = () => resetReport($('#r_date').value);
+$('#reportForm').addEventListener('submit', submitReport);
+$('#r_manager').addEventListener('change', () => { if(!$('#r_signedby').value) $('#r_signedby').value = $('#r_manager').value; });
+$('#r_date').addEventListener('change', async () => {
+  const wk = iso(mondayOf(parseISO($('#r_date').value)));
+  if(wk !== state.week){ state.week = wk; const d = $('#r_date').value; await loadWeek(); $('#r_date').value = d; }
+  fillStaffFromSchedule();
+});
+
+/* boot */
+$('#cafeName').textContent = CONFIG.CAFE_NAME;
+document.title = CONFIG.CAFE_NAME + ' · Daily Report';
+buildDenoms();
+show(store.get('view','report'));
+loadWeek();
+</script>
+</body>
+</html>
